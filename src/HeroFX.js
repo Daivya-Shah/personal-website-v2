@@ -10,6 +10,7 @@ export class HeroFX {
 		// Retina phones often use DPR 3; capping at 2 made hero sprites look soft on iOS/Safari
 		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 3));
 		this.containerEl.appendChild(this.renderer.domElement);
+		this.renderer.domElement.style.willChange = 'transform';
 
 		this.clock = new THREE.Clock();
 		this.mouse = new THREE.Vector2();
@@ -25,6 +26,12 @@ export class HeroFX {
 		this.hammerCanvas = null; // cache hammer cursor canvas
 		this.hammerRotation = 0; // current hammer rotation angle
 		this.hammerAnimation = null; // null | { startTime: number, startRotation: number }
+
+		// Reusable objects to avoid per-frame/per-event allocations
+		this._mouseWorld = new THREE.Vector3();
+		this._hoverCursorCache = { rotation: null, url: null };
+		this._lastCursorStyle = 'default';
+		this._isHovering = false;
 
 		// Rasterize SVGs at high resolution: Simple Icons decode tiny (~24px) by default;
 		// sampling that up for THREE.Sprites is very blurry on iOS Safari WebGL.
@@ -153,53 +160,46 @@ export class HeroFX {
 	};
 
 	_getHammerCursor = (rotation = 0) => {
-		const canvas = document.createElement('canvas');
-		canvas.width = 128;
-		canvas.height = 128;
+		// Round to 3 decimal places so near-identical frames share the cache
+		const key = Math.round(rotation * 1000) / 1000;
+		if (this._hoverCursorCache.rotation === key) return this._hoverCursorCache.url;
+
+		if (!this.hammerCanvas) {
+			this.hammerCanvas = document.createElement('canvas');
+			this.hammerCanvas.width = 128;
+			this.hammerCanvas.height = 128;
+		}
+		const canvas = this.hammerCanvas;
 		const ctx = canvas.getContext('2d');
-		
-		// Draw hammer emoji with rotation
+		ctx.clearRect(0, 0, 128, 128);
 		ctx.save();
 		ctx.translate(64, 64);
-		ctx.rotate(rotation);
+		ctx.rotate(key);
 		ctx.font = '96px Arial';
 		ctx.fillText('🔨', -48, 32);
 		ctx.restore();
-		
-		return canvas.toDataURL();
+
+		const url = canvas.toDataURL();
+		this._hoverCursorCache.rotation = key;
+		this._hoverCursorCache.url = url;
+		return url;
 	};
 
 	_onMouseMove = (e) => {
 		const rect = this.containerEl.getBoundingClientRect();
 		this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
 		this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-		
-		// Check if hovering over any sprite
+
+		// Update hover flag — cursor is applied inside _animate to stay off the mouse-event path
 		if (!this.explodeState && this.toolSprites) {
-			const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-			const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-			const clickWorldPos = new THREE.Vector3(x * 50, y * 40, 0);
-			
+			this._mouseWorld.set(this.mouse.x * 50, this.mouse.y * 40, 0);
 			let hovering = false;
-			const hoverThreshold = 15;
-			
 			for (const sprite of this.toolSprites) {
-				const distance = sprite.position.distanceTo(clickWorldPos);
-				if (distance < hoverThreshold) {
-					hovering = true;
-					break;
-				}
+				if (sprite.position.distanceTo(this._mouseWorld) < 15) { hovering = true; break; }
 			}
-			
-			// Change cursor to hammer emoji when hovering
-			if (hovering) {
-				const dataUrl = this._getHammerCursor(this.hammerRotation);
-				this.renderer.domElement.style.cursor = `url(${dataUrl}) 64 64, pointer`;
-			} else {
-				this.renderer.domElement.style.cursor = 'default';
-			}
-		} else if (!this.explodeState) {
-			this.renderer.domElement.style.cursor = 'default';
+			this._isHovering = hovering;
+		} else {
+			this._isHovering = false;
 		}
 	};
 
@@ -212,13 +212,12 @@ export class HeroFX {
 		const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
 		const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 		
-		// Convert to 3D world position
-		const clickWorldPos = new THREE.Vector3(x * 50, y * 40, 0);
-		
-		// Check if click is near any sprite
+		this._mouseWorld.set(x * 50, y * 40, 0);
+		const clickWorldPos = this._mouseWorld;
+
 		let clickedSprite = false;
-		const clickThreshold = 15; // distance threshold
-		
+		const clickThreshold = 15;
+
 		for (const sprite of this.toolSprites) {
 			const distance = sprite.position.distanceTo(clickWorldPos);
 			if (distance < clickThreshold) {
@@ -227,8 +226,12 @@ export class HeroFX {
 			}
 		}
 		
-		if (!clickedSprite) return; // clicked empty space
-		
+		if (!clickedSprite) return;
+
+		this.renderer.domElement.style.cursor = 'default';
+		this._lastCursorStyle = 'default';
+		this._isHovering = false;
+
 		// Start hammer rotation animation
 		this.hammerAnimation = { startTime: this.clock.getElapsedTime(), startRotation: this.hammerRotation };
 		
@@ -265,29 +268,19 @@ export class HeroFX {
 		// Handle hammer rotation animation
 		if (this.hammerAnimation) {
 			const elapsed = t - this.hammerAnimation.startTime;
-			const duration = 0.4; // 400ms rotation animation for smoother feel
-			
+			const duration = 0.4;
+
 			if (elapsed < duration) {
-				// Rotate hammer down and bounce back
 				const progress = elapsed / duration;
-				
 				if (progress < 0.5) {
-					// Swing down to -45 degrees with ease-in
-					const swingProgress = progress * 2;
-					const easeIn = swingProgress * swingProgress;
+					const easeIn = (progress * 2) * (progress * 2);
 					this.hammerRotation = this.hammerAnimation.startRotation - (Math.PI / 4) * easeIn;
 				} else {
-					// Bounce back to 0 with ease-out
 					const bounceProgress = (progress - 0.5) * 2;
 					const easeOut = 1 - Math.pow(1 - bounceProgress, 3);
 					this.hammerRotation = -(Math.PI / 4) + (Math.PI / 4) * easeOut;
 				}
-				
-				// Update cursor
-				const dataUrl = this._getHammerCursor(this.hammerRotation);
-				this.renderer.domElement.style.cursor = `url(${dataUrl}) 64 64, pointer`;
 			} else {
-				// Animation complete
 				this.hammerRotation = 0;
 				this.hammerAnimation = null;
 			}
@@ -296,13 +289,12 @@ export class HeroFX {
 		// Handle explode animation
 		if (this.explodeState) {
 			const elapsed = t - this.explodeState.startTime;
-			const dt = 0.016; // ~60fps
-			
+			const dt = 0.016;
+
 			if (this.explodeState.phase === 'explode') {
-				// Explode phase: scatter outward
 				for (let i = 0; i < this.toolSprites.length; i++) {
 					const s = this.toolSprites[i];
-					s.position.add(this.explodedVelocities[i].clone().multiplyScalar(dt));
+					s.position.addScaledVector(this.explodedVelocities[i], dt);
 					
 					if (s.userData && s.userData.label) {
 						const lbl = s.userData.label;
@@ -310,23 +302,20 @@ export class HeroFX {
 					}
 				}
 				
-				// Switch to bounce after 0.2s (much faster)
 				if (elapsed > 0.2) {
 					this.explodeState.phase = 'bounce';
 					this.explodeState.startTime = t;
 				}
 			} else if (this.explodeState.phase === 'bounce') {
-				// Bounce phase: apply physics with boundary checks
 				const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * this.camera.position.z;
 				const halfW = halfH * this.camera.aspect;
-				const damping = 0.99; // minimal damping for maximum bouncing
-				
+				const damping = 0.99;
+
 				for (let i = 0; i < this.toolSprites.length; i++) {
 					const s = this.toolSprites[i];
 					const lastSign = this.lastVelocitySigns[i];
-					
-					// Update position
-					s.position.add(this.explodedVelocities[i].clone().multiplyScalar(dt));
+
+					s.position.addScaledVector(this.explodedVelocities[i], dt);
 					
 					// Bounce off LEFT and RIGHT sides
 					if (Math.abs(s.position.x) > halfW - 3) {
@@ -439,19 +428,35 @@ export class HeroFX {
 			this.group.rotation.x = this.mouse.y * 0.08;
 
 			if (this.toolSprites) {
+				// Compute once per frame, not once per sprite
+				const circleScale = Math.min(this.xScale || 1, 0.70);
 				for (let i = 0; i < this.toolSprites.length; i++) {
 					const s = this.toolSprites[i];
 					const a = t * s.userData.speed + s.userData.angleOffset;
-					// Proper circular path (same radius on both axes), clamped to viewport
-					const circleScale = Math.min(this.xScale || 1, 0.70);
-					s.position.y = Math.sin(a) * (s.userData.radius * circleScale) + (s.userData.yOffset || 0);
-					s.position.x = Math.cos(a) * (s.userData.radius * circleScale);
-					s.position.z = Math.sin(a) * 2;
-					if (s.userData && s.userData.label) {
+					const r = s.userData.radius * circleScale;
+					const sa = Math.sin(a);
+					const ca = Math.cos(a);
+					s.position.x = ca * r;
+					s.position.y = sa * r + (s.userData.yOffset || 0);
+					s.position.z = sa * 2;
+					if (s.userData.label) {
 						const lbl = s.userData.label;
 						lbl.position.set(s.position.x, s.position.y - (lbl.userData.yGap || 3.8), s.position.z);
 					}
 				}
+			}
+
+			// Update cursor once per frame (not on every mousemove)
+			if (this._isHovering) {
+				const url = this._getHammerCursor(this.hammerRotation);
+				const style = `url(${url}) 64 64, pointer`;
+				if (this._lastCursorStyle !== style) {
+					this.renderer.domElement.style.cursor = style;
+					this._lastCursorStyle = style;
+				}
+			} else if (this._lastCursorStyle !== 'default') {
+				this.renderer.domElement.style.cursor = 'default';
+				this._lastCursorStyle = 'default';
 			}
 		}
 		
@@ -470,6 +475,11 @@ export class HeroFX {
 				'microsoft sql server': 'microsoftsqlserver',
 				'power bi': 'powerbi',
 				'azure': 'microsoftazure',
+				'aws': 'amazonaws',
+				'apache spark / kafka': 'apachespark',
+				'pyspark': 'apachespark',
+				'xgboost': 'xgboost',
+				'scikit-learn': 'scikitlearn',
 			};
 			if (m[l]) return m[l];
 			return l.replace(/\s+/g, '').replace(/[.+]/g, '');

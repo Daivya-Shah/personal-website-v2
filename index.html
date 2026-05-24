@@ -72,17 +72,16 @@
 				object-position: center; /* Centers the image within the container */
 			}
 			
-				/* Experience spotlight rows: lock height to image and center content vertically */
-				#experience .spotlight { height: 300px; }
-				#experience .spotlight .image { height: 100%; }
-				#experience .spotlight .image img { height: 100%; }
+				/* Experience spotlight rows: min-height so rows grow with content */
+				#experience .spotlight { min-height: 300px; }
+				#experience .spotlight .image { align-self: stretch; }
+				#experience .spotlight .image img { height: 100%; width: 100%; object-fit: cover; }
 				#experience .spotlight .content {
-					height: 100%;
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
-					gap: 0.75em; /* uniform spacing between all blocks */
-					padding: 0 4em; /* remove vertical padding to fit within fixed row height */
+					gap: 0.75em;
+					padding: 2em 4em;
 				}
 				/* Left-align actions and techs on desktop */
 				#experience .spotlight .content .actions { justify-content: flex-start; margin: 0; padding: 0; }
@@ -150,7 +149,8 @@
 				#experience .spotlight .actions a.button.details[aria-expanded="true"] { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.5); }
 				#experience .spotlight .actions a.button.details[aria-expanded="true"] .chip { background: #1fa89d; }
 
-				/* Restore alternating layout/colors by counting only section.spotlight rows (ignore details divs) */
+				/* Alternating layout — explicit row/row-reverse to beat main.css nth-child rule */
+				#experience > section.spotlight { flex-direction: row; }
 				#experience > section.spotlight:nth-of-type(2n) { flex-direction: row-reverse; }
 				#experience > section.spotlight:nth-of-type(1) { background-color: rgba(0, 0, 0, 0.075); }
 				#experience > section.spotlight:nth-of-type(2) { background-color: rgba(0, 0, 0, 0.15); }
@@ -667,7 +667,7 @@
 						<div class="fx-layer" aria-hidden="true"></div>
 						<div class="inner">
 							<h2>Daivya Shah</h2>
-							<p class="tagline">I like building intelligent systems that learn from data and scale beautifully.</p>
+							<p class="tagline">Building things and breaking them slightly less each time</p>
 							<ul class="actions special">
 								<li><a href="https://www.linkedin.com/in/daivya-shah/" class="button primary">LinkedIn</a></li>
 								<li><button type="button" class="button primary" id="resume-request-button">Resume</button></li>
@@ -686,7 +686,7 @@
 								<img src="images/nyu_logo.png" alt="Daivya Shah" />
 							</div>
 							<ul class="facts">
-							<li><span class="icon solid fa-graduation-cap"></span><span><span class="highlight">Computer Science, Data Science, and Business</span> undergrad at <span class="highlight">NYU</span>, graduating <span class="highlight">May 2026</span></span></li>
+							<li><span class="icon solid fa-graduation-cap"></span><span><span class="highlight">Computer Science and Data Science</span> graduate of <span class="highlight">NYU</span>, graduated <span class="highlight">May 2026</span></span></li>
 							<li><span class="icon solid fa-map-marker-alt"></span><span>Based in <span class="highlight">New York, NY</span></span></li>
 						<li><span class="icon solid fa-users"></span><span><span class="highlight">Vice President</span> of the <span class="highlight">NYU Machine Learning Club</span> with <span class="highlight">1,100+</span> members</span></li>
 								<li><span class="icon solid fa-guitar"></span><span>I enjoy playing poker, traveling, watching Formula 1, playing tennis, and jamming on the guitar</span></li>
@@ -716,10 +716,11 @@
 						</ul>
 								<ul class="tech-list">
 									<li>TypeScript</li>
-									<li>React Query</li>
-									<li>@dnd-kit</li>
-									<li>React</li>
-									<li>Next.js</li>
+									<li>Amazon Web Services (AWS)</li>
+									<li>Kubernetes</li>
+									<li>Docker</li>
+									<li>React.js</li>
+									<li>Full-Stack Development</li>
 								</ul>
 							</div>
 						</section>
@@ -727,9 +728,9 @@
 						<div class="details-inner">
 							<div class="details-content">
 								<ul class="experience-bullets">
-									<li>Automated CapEx/OpEx forecasting for goal planning by building an internal OKR platform with Golang microservices and FastAPI on Kubernetes (EKS), using gRPC for inter-service communication and surfacing $120K+ in projected annual labor cost savings</li>
-									<li>Built a Real Estate Stacking Plan by standardizing 10K+ leasing records in Databricks using Spark and Delta Lake, enabling 300+ brokers to visualize floor-by-floor occupancy via a Redis-cached React/TypeScript interface, reducing query latency by 30%</li>
-									<li>Engineered a data ingestion pipeline with Playwright, Apache Kafka, and LangChain to extract and standardize data from 70K+ property listing URLs through multi-path scraping and LLM-based schema mapping, producing structured JSON for search and analytics</li>
+									<li>Developed a responsive Commercial Real Estate (CRE) stacking plan using React and TypeScript to visualize floor-by-floor tenant and vacancy data through interactive layouts, filters, and color-coded lease expirations for faster leasing decisions.</li>
+									<li>Built an interactive time-based activity feed using React Query to merge notes, tours, proposals, and deal updates into one chronological view, improving collaboration and reducing information retrieval time.</li>
+									<li>Created a Kanban-style deal pipeline with @dnd-kit for drag-and-drop deal tracking, supporting inline editing, search, and customizable columns to help brokers manage leads and track deal progress efficiently.</li>
 								</ul>
 							</div>
 						</div>
@@ -741,42 +742,31 @@
 							<span class="role">Product Management Intern</span>
 						</h2>
 								<p><strong>Jan 2025 – Mar 2025 | New York, NY</strong></p>
-						<ul class="actions">
-						<li><a href="javascript:void(0)" class="button small details" aria-expanded="false" aria-controls="details-ubiq"><span class="label">View Details</span><span class="chip"><span class="chev icon solid fa-chevron-down"></span></span></a></li>
-						</ul>
 								<ul class="tech-list">
-									<li>Figma</li>
-									<li>Jira</li>
-									<li>Confluence</li>
-									<li>Excel</li>
+									<li>Technical Product Management</li>
 								</ul>
 							</div>
 						</section>
-					<div id="details-ubiq" class="spotlight-details" role="region" aria-hidden="true" aria-label="Ubiq details">
-						<div class="details-inner">
-							<div class="details-content">
-								<p>At Ubiq, I worked as a Product Management Intern where I focused on improving user experience and overall product performance. I led user research by conducting 60+ customer interviews and turned those insights into 5 key UX improvements that directly enhanced usability and engagement.</p>
-								<p>I also executed full-cycle product testing, identifying 50+ bugs and collaborating with engineers to resolve 4 critical issues affecting core functionality. Additionally, I managed an agile backlog of 350+ features, UI enhancements, and bug fixes in Jira, prioritizing development based on user needs and business impact.</p>
-							</div>
-						</div>
-					</div>
 						<section class="spotlight">
 							<div class="image"><img src="images/pic03.jpg" alt="Daivya Shah" /></div><div class="content">
 						<h2>
 							<a href="https://weareeverise.com/" target="_blank" rel="noopener" class="company-link"><span class="company">Everise</span></a>
-							<span class="role">Data Analyst Intern</span>
+							<span class="role">Data Engineer Intern</span>
 						</h2>
 								<p><strong>Jul 2024 – Dec 2024 | New York, NY</strong></p>
 						<ul class="actions">
 						<li><a href="javascript:void(0)" class="button small details" aria-expanded="false" aria-controls="details-everise"><span class="label">View Details</span><span class="chip"><span class="chev icon solid fa-chevron-down"></span></span></a></li>
 						</ul>
 								<ul class="tech-list">
-									<li>Python</li>
-									<li>Go</li>
-									<li>Apache Airflow</li>
+									<li>AWS Glue</li>
 									<li>SQL</li>
-									<li>LightGBM</li>
-									<li>Power BI</li>
+									<li>XGBoost</li>
+									<li>Data Build Tool (DBT)</li>
+									<li>Snowflake</li>
+									<li>Data Governance</li>
+									<li>Extract, Transform, Load (ETL)</li>
+									<li>Amazon Kinesis</li>
+									<li>Microsoft Power BI</li>
 								</ul>
 							</div>
 						</section>
@@ -784,7 +774,7 @@
 						<div class="details-inner">
 							<div class="details-content">
 								<ul class="experience-bullets">
-									<li>Developed a streaming pipeline to ingest customer call transcripts from Five9 into Snowflake using AWS Kinesis and Glue, enabling EverAI's NLP QA scoring models to automatically audit 78% of a healthcare client's 50K+ monthly calls, up from 12% manual review</li>
+									<li>Developed a streaming pipeline to load customer call transcripts into Snowflake using AWS Kinesis and Glue, enabling NLP QA scoring models to automatically audit 78% of a healthcare client's 50K+ monthly calls; visualized results in Power BI Quality Dashboard</li>
 									<li>Extended the AWS Glue ingestion pipeline in Python with Protected Health Information (PHI) detection, automatically scanning and redacting 18 HIPAA identifier categories before loading to Snowflake, achieving zero compliance violations</li>
 									<li>Built an XGBoost workforce demand forecasting model in Python using features engineered with dbt in Snowflake from Workday HCM and call detail records, reducing staffing error (MAPE) by 11% and cutting WFM planners' manual reporting by 5+ hours weekly</li>
 								</ul>
@@ -795,19 +785,19 @@
 							<div class="image"><img src="images/pic04.jpg" alt="Daivya Shah" /></div><div class="content">
 						<h2>
 							<a href="https://www.emeasurematics.com/" target="_blank" rel="noopener" class="company-link"><span class="company">eMeasurematics</span></a>
-							<span class="role">Data Science / ML Intern</span>
+							<span class="role">Machine Learning Intern</span>
 						</h2>
-								<p><strong>Jun 2024 – Jul 2024 | Chicago, IL</strong></p>
+								<p><strong>May 2024 – Jul 2024 | Chicago, IL</strong></p>
 						<ul class="actions">
 						<li><a href="javascript:void(0)" class="button small details" aria-expanded="false" aria-controls="details-emeasurematics"><span class="label">View Details</span><span class="chip"><span class="chev icon solid fa-chevron-down"></span></span></a></li>
 						</ul>
 								<ul class="tech-list">
-									<li>Python</li>
-									<li>Flask</li>
-									<li>XGBoost</li>
-									<li>SQLAlchemy</li>
-									<li>MySQL</li>
-									<li>Tableau</li>
+									<li>Grafana</li>
+									<li>PyTorch</li>
+									<li>Deep Learning</li>
+									<li>Computer Vision</li>
+									<li>Object Detection</li>
+									<li>OpenCV</li>
 								</ul>
 							</div>
 						</section>
@@ -815,8 +805,9 @@
 						<div class="details-inner">
 							<div class="details-content">
 								<ul class="experience-bullets">
-									<li>Fine-tuned a YOLOv8 computer vision model for object detection on 3,000+ labeled crane camera images for 2 underperforming classes via mosaic augmentation and class-weighted loss, improving mAP@0.5 by 0.23 and misclassification rate from 22% to 5%</li>
-									<li>Built an anomaly detection pipeline on 2.4M+ crane PLC records across 14 sensor channels using Isolation Forest and LSTM Autoencoder (scikit-learn, PyTorch), detecting 11 failure-risk anomalies from 6 weeks of historical sensor data with 91% precision</li>
+									<li>Adapted a computer vision-based inventory system for a new steel plant by retraining a YOLOv8 model on 8,400+ site-specific images using OpenCV and SAM-assisted labeling, improving coil and slab detection accuracy from 62% to 91% across 2 yard zones</li>
+									<li>Built an LSTM autoencoder in PyTorch on 46M+ crane sensor records from 3 cranes over 6 months to detect mechanical issues missed by existing safety alerts, achieving 88% precision and 83% recall on 340 incidents with 38 ms inference latency</li>
+									<li>Developed a Grafana dashboard on InfluxDB to visualize crane sensor data and flagged anomalies, helping engineers investigate issues</li>
 								</ul>
 							</div>
 						</div>
@@ -827,242 +818,184 @@
 					<section id="projects-banner" class="banner">
 						<div class="inner">
 							<h2>Projects</h2>
-							<ul class="actions special">
-								<li><a href="https://docs.google.com/document/d/1mNuWdEuJVrS7wYrwa6II0rcTt2ezDHsSg0t240lUejs/edit?usp=sharing" class="button primary" target="_blank" rel="noopener">View all projects in detail</a></li>
-							</ul>
 						</div>
 					</section>
 
 				<!-- Projects -->
 					<section id="projects" class="wrapper style1 special">
 						<div class="inner">
-							<div class="row gtr-50 gtr-uniform">
-									<div class="col-12"><h3 class="highlight-title">Highlight Projects</h3></div>
-									<div class="col-12">
-										<div class="highlight-masonry">
-											<div class="highlight-masonry-col">
-												<div class="box">
-													<div class="vision2voice-images">
-														<span class="image fit"><img src="images/vision2voice-1.png" alt="Vision2Voice: live NBA clip with event detection and visual summary" /></span>
-														<span class="image fit"><img src="images/vision2voice-2.png" alt="Vision2Voice: player and team stats with generated commentary" /></span>
-													</div>
-													<h3>Vision2Voice</h3>
-													<p class="project-date">2025</p>
-													<p>Add commentary, detect players, and events (assists, three-pointers, and more) live on NBA games.</p>
-													<ul class="tech-list">
-														<li>TypeScript</li>
-														<li>Python</li>
-														<li>FastAPI</li>
-														<li>OpenCV</li>
-														<li>OpenAI API</li>
-														<li>Supabase</li>
-														<li>Vite</li>
-													</ul>
-													<ul class="actions special">
-														<li><a href="https://github.com/Daivya-Shah/Add-commentary-to-live-NBA-games" class="icon brands fa-github" target="_blank" rel="noopener" title="View on GitHub"><span class="label">GitHub</span></a></li>
-													</ul>
-												</div>
-												<div class="box">
-													<h3>Convers AI</h3>
-													<p class="project-date">2025</p>
-													<p>Convers AI is a Next.js app for authenticated, context-aware AI conversations, letting users upload PDFs, retrieve relevant knowledge via Pinecone embeddings, and generate study tools like flashcards from chats.</p>
-													<ul class="tech-list">
-														<li>Next.js</li>
-														<li>TypeScript</li>
-														<li>Pinecone</li>
-														<li>OpenAI API</li>
-														<li>Tailwind CSS</li>
-													</ul>
-													<ul class="actions special">
-														<li><a href="https://github.com/Daivya-Shah/Convers-AI" class="icon brands fa-github" target="_blank" rel="noopener" title="View on GitHub"><span class="label">GitHub</span></a></li>
-													</ul>
-												</div>
-												<div class="box">
-													<span class="image fit"><img src="images/harvest.png" alt="Daivya Shah" /></span>
-													<h3>Harvest</h3>
-													<p class="project-date">Feb 2025 - Mar 2025</p>
-													<p>Helps CPG founders find the right manufacturing partners using GPT-4 RAG search, Pinecone vector retrieval, and XGBoost ranking models.</p>
-													<ul class="tech-list">
-														<li>Python</li>
-														<li>Ruby</li>
-														<li>FastAPI</li>
-														<li>LangChain</li>
-														<li>Scikit-learn</li>
-														<li>GPT-4</li>
-														<li>Pinecone</li>
-														<li>Selenium</li>
-														<li>Firebase</li>
-														<li>XGBoost Ranker</li>
-													</ul>
-												</div>
-											</div>
-											<div class="highlight-masonry-col">
-												<div class="box">
-													<span class="image fit"><img src="images/fitzty.png" alt="Daivya Shah" /></span>
-													<h3>Fitzty</h3>
-													<p class="project-date">Jul 2025 - Aug 2025</p>
-													<p>Fashion intelligence platform that digitizes wardrobes, generates photorealistic outfits, and recommends personalized styles using computer vision, pgvector, and Gemini 2.5 Flash Image.</p>
-													<ul class="tech-list">
-														<li>Python</li>
-														<li>JavaScript</li>
-														<li>Gemini 2.5 Flash Image</li>
-														<li>PostgreSQL</li>
-														<li>Supabase</li>
-														<li>Next.js</li>
-														<li>React.js</li>
-														<li>Swift</li>
-														<li>Xcode</li>
-													</ul>
-													<ul class="actions special">
-														<li><a href="https://github.com/Daivya-Shah/Fitzty.git" class="icon brands fa-github" target="_blank" rel="noopener" title="View on GitHub"><span class="label">GitHub</span></a></li>
-													</ul>
-												</div>
-												<div class="box">
-													<span class="image fit"><img src="images/assignxchange.png" alt="Daivya Shah" /></span>
-													<h3>AssignXchange</h3>
-													<p class="project-date">Apr 2025 - May 2025</p>
-													<p>AI-powered real estate marketplace connecting wholesalers and investors through semantic search, GPT-4 embeddings, and automated deal ranking for smarter property investments.</p>
-													<ul class="tech-list">
-														<li>Python</li>
-														<li>TypeScript</li>
-														<li>LangChain</li>
-														<li>GPT-4</li>
-														<li>Firecrawl</li>
-														<li>PostgreSQL</li>
-														<li>Stripe</li>
-													</ul>
-													<ul class="actions special">
-														<li><a href="https://github.com/Daivya-Shah/AssignXchange.git" class="icon brands fa-github" target="_blank" rel="noopener" title="View on GitHub"><span class="label">GitHub</span></a></li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</div>
-						<div class="col-12"><h3 class="older-title">Older Projects</h3></div>
-									<div class="col-6 col-12-medium">
-										<div class="box">
-											<span class="image fit"><img src="images/anywebsupportai.png" alt="Daivya Shah" /></span>
-											<h3>AnyWebSupport AI — Site Support Bot</h3>
-											<p class="project-date">Aug 2024 - Sep 2024</p>
-											<p>Real-time, context-based customer support that generates responses directly from a website's content using OpenAI API.</p>
-											<ul class="tech-list">
-												<li>Node.js</li>
-												<li>OpenAI API</li>
-												<li>Cheerio</li>
-												<li>Firebase</li>
-												<li>Next.js</li>
-												<li>React</li>
-												<li>Material UI</li>
-											</ul>
-											<ul class="actions special">
-												<li><a href="https://github.com/Daivya-Shah/AnyWebSupport-AI-Customer-Service-for-Any-Website.git" class="icon brands fa-github" target="_blank" rel="noopener" title="View on GitHub"><span class="label">GitHub</span></a></li>
-											</ul>
-										</div>
-									</div>
-									<div class="col-6 col-12-medium">
-										<div class="box">
-											<span class="image fit"><img src="images/quickcardsai.png" alt="Daivya Shah" /></span>
-											<h3>QuickCards AI — Flashcard Generator</h3>
-											<p class="project-date">Aug 2024</p>
-											<p>Automatically creates study flashcards from text input using GPT-4 with Stripe subscriptions and 3D flip animations.</p>
-											<ul class="tech-list">
-												<li>OpenAI API</li>
-												<li>Firebase</li>
-												<li>Clerk</li>
-												<li>Stripe</li>
-												<li>Next.js</li>
-												<li>React</li>
-											</ul>
-											<ul class="actions special">
-												<li><a href="https://github.com/Daivya-Shah/QuickCards-AI-Flashcard-Generator.git" class="icon brands fa-github" target="_blank" rel="noopener" title="View on GitHub"><span class="label">GitHub</span></a></li>
-											</ul>
-										</div>
-									</div>
-									<div class="col-6 col-12-medium">
-										<div class="box">
-											<span class="image fit"><img src="images/ratemyprofai.png" alt="Daivya Shah" /></span>
-											<h3>RateMyProf AI — Professor Reviews</h3>
-											<p class="project-date">Aug 2024</p>
-											<p>Simplifies exploring and adding professor reviews through AI-powered semantic search with RAG-based retrieval.</p>
-											<ul class="tech-list">
-												<li>Node.js</li>
-												<li>OpenAI API</li>
-												<li>Pinecone</li>
-												<li>Cheerio</li>
-												<li>Next.js</li>
-												<li>React</li>
-											</ul>
-											<ul class="actions special">
-												<li><a href="https://github.com/Daivya-Shah/RateMyProfessor-AI-Professor-Reviews.git" class="icon brands fa-github" target="_blank" rel="noopener" title="View on GitHub"><span class="label">GitHub</span></a></li>
-											</ul>
-										</div>
-									</div>
+							<div id="github-repos-grid" class="row gtr-50 gtr-uniform" style="width:100%;">
+								<div class="col-12" style="text-align:center;padding:2em 0;"><p>Loading repositories…</p></div>
+							</div>
+							<div id="github-older-section" style="display:none;width:100%;margin-top:3em;">
+								<div class="col-12"><h3 class="older-title">Older Projects</h3></div>
+								<div id="github-older-grid" class="row gtr-50 gtr-uniform"></div>
 							</div>
 						</div>
 					</section>
+					<script>
+					(function () {
+						const GITHUB_USER = 'Daivya-Shah';
+
+						// Repo names (lowercase, partial match) to route into each section
+						const PINNED_NAMES = ['personal-website', 'vision2voice', 'commentary', 'nba-game', 'ecole', 'ucla', 'genai', 'stacking', 'convers'];
+						const OLDER_NAMES  = ['ratemyprof', 'quickcards', 'anywebsupport', 'stocksmart'];
+
+						function inList(name, list) {
+							var n = name.toLowerCase();
+							return list.some(function (k) { return n.indexOf(k) !== -1; });
+						}
+
+						function renderCard(repo, pinned) {
+							var name = repo.name.replace(/[-_]/g, ' ');
+							var desc = repo.description
+								? '<p style="flex:1;margin:0.3em 0;">' + repo.description + '</p>'
+								: '<p style="flex:1;margin:0.3em 0;opacity:0.45;font-style:italic;">No description</p>';
+							var links = ['<li><a href="' + repo.html_url + '" class="icon brands fa-github" target="_blank" rel="noopener" title="View on GitHub"><span class="label">GitHub</span></a></li>'];
+							if (repo.homepage && repo.homepage.trim()) {
+								links.push('<li><a href="' + repo.homepage.trim() + '" class="icon solid fa-external-link-alt" target="_blank" rel="noopener" title="Live Demo"><span class="label">Live Demo</span></a></li>');
+							}
+							var pin = pinned
+								? '<span title="Pinned" style="position:absolute;top:0.75em;right:0.85em;font-size:0.75em;opacity:0.55;transform:rotate(45deg);display:inline-block;" class="icon solid fa-thumbtack" aria-hidden="true"></span>'
+								: '';
+							return '<div class="col-4 col-6-medium col-12-small">'
+								+ '<div class="box" style="position:relative;height:100%;display:flex;flex-direction:column;gap:0.3em;">'
+								+ pin
+								+ '<h3 style="margin-bottom:0;padding-right:1.4em;">' + name + '</h3>'
+								+ desc
+								+ '<ul class="actions special" style="margin-top:auto;padding-top:0.5em;">' + links.join('') + '</ul>'
+								+ '</div></div>';
+						}
+
+						function scoreRepo(r) {
+							var s = 0;
+							s += r.stargazers_count * 10;
+							s += r.forks_count * 6;
+							if (r.homepage && r.homepage.trim()) s += 25;
+							if (r.description) s += 10;
+							s += (r.topics ? r.topics.length : 0) * 3;
+							var monthsAgo = (Date.now() - new Date(r.pushed_at)) / (1000 * 60 * 60 * 24 * 30);
+							if (monthsAgo < 1)       s += 18;
+							else if (monthsAgo < 3)  s += 12;
+							else if (monthsAgo < 6)  s += 7;
+							else if (monthsAgo < 12) s += 3;
+							return s;
+						}
+
+						function fillGrid(id, repos, pinned) {
+							document.getElementById(id).innerHTML = repos.map(function(r) { return renderCard(r, pinned); }).join('');
+						}
+
+						fetch(
+							'https://api.github.com/users/' + GITHUB_USER + '/repos?sort=pushed&per_page=100&type=owner',
+							{ headers: { 'Accept': 'application/vnd.github+json' } }
+						)
+							.then(function (res) {
+								if (!res.ok) throw new Error('GitHub API ' + res.status);
+								return res.json();
+							})
+							.then(function (repos) {
+								var all = repos.filter(function (r) {
+									return !r.fork && r.name.toLowerCase() !== GITHUB_USER.toLowerCase();
+								});
+
+								var pinned = [], main = [], older = [];
+								all.forEach(function (r) {
+									if (inList(r.name, OLDER_NAMES))       older.push(r);
+									else if (inList(r.name, PINNED_NAMES)) pinned.push(r);
+									else                                   main.push(r);
+								});
+
+								pinned.sort(function (a, b) { return scoreRepo(b) - scoreRepo(a); });
+								main.sort(function (a, b) { return scoreRepo(b) - scoreRepo(a); });
+								older.sort(function (a, b) { return scoreRepo(b) - scoreRepo(a); });
+
+								var combined = pinned.map(function(r) { return renderCard(r, true); })
+									.concat(main.map(function(r) { return renderCard(r, false); }));
+								var mainGrid = document.getElementById('github-repos-grid');
+								mainGrid.innerHTML = combined.length
+									? combined.join('')
+									: '<div class="col-12"><p>No repositories found.</p></div>';
+
+								if (older.length) {
+									fillGrid('github-older-grid', older);
+									document.getElementById('github-older-section').style.display = 'block';
+								}
+							})
+							.catch(function () {
+								document.getElementById('github-repos-grid').innerHTML =
+									'<div class="col-12" style="text-align:center;"><p>Could not load repositories. <a href="https://github.com/' + GITHUB_USER + '" target="_blank" rel="noopener">View on GitHub →</a></p></div>';
+							});
+					})();
+					</script>
 
 				<!-- Skills & Tools -->
 					<section id="skills" class="wrapper style3 special">
 						<div class="inner">
 							<header class="major">
-								<h2>Skills &amp; Tools</h2>
+								<h2>Technical Skills</h2>
 							</header>
 							<div class="skills-category">
 								<h3>Languages</h3>
 								<ul class="skills-grid">
-									<li class="skill"><img src="https://cdn.simpleicons.org/python" alt="Daivya Shah" /><span>Python</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/python" alt="Python" /><span>Python</span></li>
 									<li class="skill"><span>SQL</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/javascript" alt="Daivya Shah" /><span>JavaScript</span></li>
-								<li class="skill"><img src="https://cdn.simpleicons.org/typescript" alt="Daivya Shah" /><span>TypeScript</span></li>
-								<li class="skill"><img src="https://cdn.simpleicons.org/ruby" alt="Daivya Shah" /><span>Ruby</span></li>
-								<li class="skill"><img src="https://cdn.simpleicons.org/go" alt="Daivya Shah" /><span>Golang</span></li>
-								<li class="skill"><span class="icon brands fa-java" aria-hidden="true" style="color:#f89820;"></span><span>Java</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/cplusplus" alt="Daivya Shah" /><span>C++</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/html5" alt="Daivya Shah" /><span>HTML</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/javascript" alt="JavaScript" /><span>JavaScript</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/typescript" alt="TypeScript" /><span>TypeScript</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/go" alt="Golang" /><span>Golang</span></li>
+									<li class="skill"><span class="icon brands fa-java" aria-hidden="true" style="color:#f89820;"></span><span>Java</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/swift" alt="Swift" /><span>Swift</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/html5" alt="HTML" /><span>HTML</span></li>
 									<li class="skill"><span class="icon brands fa-css3" aria-hidden="true" style="color:#1572B6;"></span><span>CSS</span></li>
 								</ul>
 							</div>
 							<div class="skills-category">
-								<h3>Libraries</h3>
+								<h3>Frameworks / Libraries</h3>
 								<ul class="skills-grid">
-									<li class="skill"><img src="https://cdn.simpleicons.org/pandas" alt="Daivya Shah" /><span>Pandas</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/numpy" alt="Daivya Shah" /><span>NumPy</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/scikitlearn" alt="Daivya Shah" /><span>Scikit-learn</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/pytorch" alt="Daivya Shah" /><span>PyTorch</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/tensorflow" alt="Daivya Shah" /><span>TensorFlow</span></li>
-									<li class="skill"><span>Statsmodels</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/langchain" alt="Daivya Shah" /><span>LangChain</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/react" alt="React" /><span>React</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/nodedotjs" alt="Node.js" /><span>Node.js</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/fastapi" alt="FastAPI" /><span>FastAPI</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/flask" alt="Flask" /><span>Flask</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/pytorch" alt="PyTorch" /><span>PyTorch</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/tensorflow" alt="TensorFlow" /><span>TensorFlow</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/scikitlearn" alt="Scikit-learn" /><span>Scikit-learn</span></li>
+									<li class="skill"><span>XGBoost</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/langchain" alt="LangChain" /><span>LangChain</span></li>
 									<li class="skill"><span>PySpark</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/sqlalchemy" alt="Daivya Shah" /><span>SQLAlchemy</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/pandas" alt="Pandas" /><span>Pandas</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/numpy" alt="NumPy" /><span>NumPy</span></li>
 								</ul>
 							</div>
 							<div class="skills-category">
-								<h3>Frameworks &amp; Tools</h3>
+								<h3>Technologies</h3>
 								<ul class="skills-grid">
-									<li class="skill"><img src="https://cdn.simpleicons.org/react" alt="Daivya Shah" /><span>React</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/nextdotjs" alt="Daivya Shah" /><span>Next.js</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/angular" alt="Daivya Shah" /><span>Angular</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/nodedotjs" alt="Daivya Shah" /><span>Node.js</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/flask" alt="Daivya Shah" /><span>Flask</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/fastapi" alt="Daivya Shah" /><span>FastAPI</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/redis" alt="Daivya Shah" /><span>Redis</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/apacheairflow" alt="Daivya Shah" /><span>Apache Airflow</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/apachespark" alt="Daivya Shah" /><span>Apache Spark</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/apachekafka" alt="Daivya Shah" /><span>Apache Kafka</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/databricks" alt="Daivya Shah" /><span>Databricks</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/docker" alt="Daivya Shah" /><span>Docker</span></li>
-									<li class="skill"><span>AWS (EC2, S3)</span></li>
-									<li class="skill"><span>Azure Cloud</span></li>
-									<li class="skill"><span>Pinecone</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/mysql" alt="Daivya Shah" /><span>MySQL</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/postgresql" alt="Daivya Shah" /><span>PostgreSQL</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/mongodb" alt="Daivya Shah" /><span>MongoDB (NoSQL)</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/firebase" alt="Daivya Shah" /><span>Firebase</span></li>
-									<li class="skill"><span>Power BI</span></li>
-									<li class="skill"><span>Tableau</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/git" alt="Daivya Shah" /><span>Git</span></li>
-									<li class="skill"><img src="https://cdn.simpleicons.org/jira" alt="Daivya Shah" /><span>JIRA</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/amazonaws" alt="AWS" /><span>AWS</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/docker" alt="Docker" /><span>Docker</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/kubernetes" alt="Kubernetes" /><span>Kubernetes</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/apachespark" alt="Apache Spark" /><span>Apache Spark / Kafka</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/databricks" alt="Databricks" /><span>Databricks</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/snowflake" alt="Snowflake" /><span>Snowflake</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/postgresql" alt="PostgreSQL" /><span>PostgreSQL</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/mongodb" alt="MongoDB" /><span>MongoDB</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/redis" alt="Redis" /><span>Redis</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/powerbi" alt="Power BI" /><span>Power BI</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/grafana" alt="Grafana" /><span>Grafana</span></li>
+									<li class="skill"><img src="https://cdn.simpleicons.org/git" alt="Git" /><span>Git</span></li>
+								</ul>
+							</div>
+							<div class="skills-category">
+								<h3>Concepts</h3>
+								<ul class="skills-grid">
+									<li class="skill"><span>System Design</span></li>
+									<li class="skill"><span>CI/CD</span></li>
+									<li class="skill"><span>Full Stack</span></li>
+									<li class="skill"><span>OOP</span></li>
 									<li class="skill"><span>Agile</span></li>
+									<li class="skill"><span>Distributed Systems</span></li>
+									<li class="skill"><span>ETL/ELT</span></li>
+									<li class="skill"><span>Big Data</span></li>
+									<li class="skill"><span>MLOps</span></li>
+									<li class="skill"><span>Statistical Modeling</span></li>
 								</ul>
 							</div>
 						</div>
