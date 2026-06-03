@@ -1239,15 +1239,118 @@
 			</script>
 
 		<script>
-			fetch('https://ntfy.sh/daivya-portfolio-x1f4rq985g', {
-				method: 'POST',
-				body: 'Someone is viewing your portfolio!',
-				headers: {
-					'Title': 'Portfolio Visit',
-					'Priority': 'high',
-					'Tags': 'eyes'
+			(async () => {
+				const NTFY = 'https://ntfy.sh/daivya-portfolio-x1f4rq985g';
+
+				function ping(title, body, tags, priority = 'default') {
+					fetch(NTFY, {
+						method: 'POST',
+						keepalive: true,
+						body,
+						headers: { 'Title': title, 'Tags': tags, 'Priority': priority }
+					});
 				}
-			});
+
+				// Geo lookup
+				const geo = await fetch('https://ipapi.co/json/').then(r => r.json()).catch(() => ({}));
+
+				// Return visitor detection
+				const visits = parseInt(localStorage.getItem('pv') || '0') + 1;
+				localStorage.setItem('pv', visits);
+				const visitLabel = visits === 1 ? '1st visit' : `Visit #${visits}`;
+
+				// Referrer
+				const referrer = document.referrer ? new URL(document.referrer).hostname : 'Direct / Unknown';
+
+				// Browser + OS
+				const ua = navigator.userAgent;
+				let browser = 'Unknown';
+				if (ua.includes('Edg')) browser = 'Edge';
+				else if (ua.includes('Chrome')) browser = 'Chrome';
+				else if (ua.includes('Firefox')) browser = 'Firefox';
+				else if (ua.includes('Safari')) browser = 'Safari';
+				let os = 'Unknown';
+				if (ua.includes('Windows')) os = 'Windows';
+				else if (ua.includes('Mac')) os = 'Mac';
+				else if (ua.includes('iPhone')) os = 'iPhone';
+				else if (ua.includes('Android')) os = 'Android';
+				else if (ua.includes('Linux')) os = 'Linux';
+
+				// Initial visit ping
+				ping(
+					visits > 1 ? `Return Visitor! (${visitLabel})` : 'New Portfolio Visit',
+					[
+						visitLabel,
+						`From: ${referrer}`,
+						`IP: ${geo.ip || 'unknown'}`,
+						`Location: ${[geo.city, geo.region, geo.country_name].filter(Boolean).join(', ') || 'unknown'}`,
+						`Org/ISP: ${geo.org || 'unknown'}`,
+						`Browser: ${browser} on ${os}`,
+						`Screen: ${screen.width}x${screen.height}`,
+						`Language: ${navigator.language}`,
+						`Timezone: ${Intl.DateTimeFormat().resolvedOptions().timeZone}`,
+						`Time: ${new Date().toLocaleString()}`
+					].join('\n'),
+					visits > 1 ? 'repeat,eyes' : 'eyes',
+					'high'
+				);
+
+				// Time on page
+				const start = Date.now();
+				let exitSent = false;
+				function sendExit() {
+					if (exitSent) return;
+					exitSent = true;
+					const s = Math.round((Date.now() - start) / 1000);
+					const duration = s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `${s}s`;
+					ping('Visitor Left', `Time on page: ${duration}\n${visitLabel} — From: ${referrer}`, 'stopwatch');
+				}
+				document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sendExit(); });
+				window.addEventListener('pagehide', sendExit);
+
+				// Scroll depth milestones
+				const scrolled = new Set();
+				window.addEventListener('scroll', () => {
+					const pct = Math.round((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight * 100);
+					[25, 50, 75, 100].forEach(m => {
+						if (pct >= m && !scrolled.has(m)) {
+							scrolled.add(m);
+							ping(`Scrolled ${m}%`, `Reached ${m}% of your portfolio\n${visitLabel} — From: ${referrer}`, 'scroll');
+						}
+					});
+				}, { passive: true });
+
+				// Click tracking
+				function trackClick(label) {
+					ping(`Clicked: ${label}`, `${label} was clicked\n${visitLabel} — From: ${referrer}`, 'point_up');
+				}
+
+				document.addEventListener('click', e => {
+					const a = e.target.closest('a');
+					if (a) {
+						if (a.href.includes('linkedin.com')) trackClick('LinkedIn');
+						else if (a.href === 'https://github.com/Daivya-Shah' || a.href === 'https://github.com/Daivya-Shah/') trackClick('GitHub Profile');
+						else if (a.href.startsWith('mailto:')) trackClick('Email');
+						else if (a.href.startsWith('tel:')) trackClick('Phone');
+					}
+					const btn = e.target.closest('button');
+					if (btn && btn.id === 'resume-request-button') trackClick('Resume Button');
+				});
+
+				// Resume form submission — captures their email!
+				const resumeForm = document.querySelector('#resume-modal form');
+				if (resumeForm) {
+					resumeForm.addEventListener('submit', () => {
+						const email = resumeForm.querySelector('input[type="email"]')?.value || 'unknown';
+						ping(
+							'Resume Requested!',
+							`Email: ${email}\n${visitLabel} — From: ${referrer}\nOrg/ISP: ${geo.org || 'unknown'}\nLocation: ${[geo.city, geo.region, geo.country_name].filter(Boolean).join(', ') || 'unknown'}`,
+							'page_facing_up,fire',
+							'urgent'
+						);
+					});
+				}
+			})();
 		</script>
 
 	</body>
