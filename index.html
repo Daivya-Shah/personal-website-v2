@@ -703,7 +703,7 @@
 								<img src="images/nyu_logo.png" alt="Daivya Shah" />
 							</div>
 							<ul class="facts">
-							<li><span class="icon solid fa-graduation-cap"></span><span><span class="highlight">Computer Science and Data Science</span> graduate from <span class="highlight">NYU</span>, <span class="highlight">May 2026</span></span></li>
+							<li><span class="icon solid fa-graduation-cap"></span><span><span class="highlight">Computer Science and Data Science</span> at <span class="highlight">NYU</span>, graduated <span class="highlight">May 2026</span></span></li>
 							<li><span class="icon solid fa-map-marker-alt"></span><span>Based in <span class="highlight">New York, NY</span></span></li>
 						<li><span class="icon solid fa-users"></span><span><span class="highlight">Vice President</span> of the <span class="highlight">NYU Machine Learning Club</span> with <span class="highlight">1,100+</span> members</span></li>
 								<li><span class="icon solid fa-guitar"></span><span>I enjoy playing poker, traveling, watching Formula 1, playing tennis, and jamming on the guitar</span></li>
@@ -1308,18 +1308,6 @@
 				document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') sendExit(); });
 				window.addEventListener('pagehide', sendExit);
 
-				// Scroll depth milestones
-				const scrolled = new Set();
-				window.addEventListener('scroll', () => {
-					const pct = Math.round((window.scrollY + window.innerHeight) / document.documentElement.scrollHeight * 100);
-					[25, 50, 75, 100].forEach(m => {
-						if (pct >= m && !scrolled.has(m)) {
-							scrolled.add(m);
-							ping(`Scrolled ${m}%`, `Reached ${m}% of your portfolio\n${visitLabel} — From: ${referrer}`, 'scroll');
-						}
-					});
-				}, { passive: true });
-
 				// Click tracking
 				function trackClick(label) {
 					ping(`Clicked: ${label}`, `${label} was clicked\n${visitLabel} — From: ${referrer}`, 'point_up');
@@ -1346,6 +1334,23 @@
 							'Resume Requested!',
 							`Email: ${email}\n${visitLabel} — From: ${referrer}\nOrg/ISP: ${geo.org || 'unknown'}\nLocation: ${[geo.city, geo.region, geo.country_name].filter(Boolean).join(', ') || 'unknown'}`,
 							'page_facing_up,fire',
+							'urgent'
+						);
+					});
+				}
+
+				// Let's Connect form submission
+				const contactForm = document.querySelector('#contact form');
+				if (contactForm) {
+					contactForm.addEventListener('submit', () => {
+						const name = contactForm.querySelector('input[name="name"]')?.value || 'unknown';
+						const email = contactForm.querySelector('input[type="email"]')?.value || 'unknown';
+						const subject = contactForm.querySelector('input[name="contact_subject"]')?.value || '(no subject)';
+						const message = contactForm.querySelector('textarea')?.value || '';
+						ping(
+							'Someone messaged you!',
+							`Name: ${name}\nEmail: ${email}\nSubject: ${subject}\nMessage: ${message}\n\n${visitLabel} — From: ${referrer}\nOrg/ISP: ${geo.org || 'unknown'}\nLocation: ${[geo.city, geo.region, geo.country_name].filter(Boolean).join(', ') || 'unknown'}`,
+							'email,fire',
 							'urgent'
 						);
 					});
