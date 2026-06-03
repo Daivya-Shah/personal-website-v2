@@ -1238,5 +1238,17 @@
 				})();
 			</script>
 
+		<script>
+			fetch('https://ntfy.sh/daivya-portfolio-x1f4rq985g', {
+				method: 'POST',
+				body: 'Someone is viewing your portfolio!',
+				headers: {
+					'Title': 'Portfolio Visit',
+					'Priority': 'high',
+					'Tags': 'eyes'
+				}
+			});
+		</script>
+
 	</body>
 </html>
