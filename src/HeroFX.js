@@ -159,11 +159,14 @@ export class HeroFX {
 		this.xScale = Math.min(1.5, maxAllowedX / Math.max(1, maxPlannedRadius));
 
 		// On portrait containers (mobile) the same world-unit scale maps to more pixels
-		// because the canvas is taller. Scale sprites down proportionally so they appear
-		// the same physical size regardless of banner height.
+		// because the canvas is taller. Scale sprites and their label gap proportionally.
 		const spriteScale = 8 * Math.min(1, clientWidth / Math.max(1, clientHeight));
+		const yGap = spriteScale * 0.475; // 3.8/8 — keeps label flush under icon at any size
 		for (const s of this.toolSprites || []) {
 			s.scale.set(spriteScale, spriteScale, 1);
+			if (s.userData.label) {
+				s.userData.label.userData.yGap = yGap;
+			}
 		}
 	};
 
