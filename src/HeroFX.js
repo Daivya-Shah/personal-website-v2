@@ -187,32 +187,43 @@ export class HeroFX {
 		const { clientWidth, clientHeight } = this.containerEl;
 		const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * this.camera.position.z;
 		const halfW = halfH * (clientWidth / Math.max(clientHeight, 1));
-		const xRange = halfW * 0.78;
-		const yRange = halfH * 0.72;
-		const n = this.toolSprites.length;
-		const cols = Math.max(2, Math.ceil(Math.sqrt(n * (clientWidth / Math.max(clientHeight, 1)))));
-		const rows = Math.ceil(n / cols);
-		const cellW = (2 * xRange) / cols;
-		const cellH = (2 * yRange) / rows;
+		const xRange = halfW * 0.80;
+
+		// Keep icons out of the center text area (h2 + tagline + buttons ≈ ±10 world units)
+		const textClear = 10;
+		const yEdge    = halfH * 0.68; // don't go all the way to the very top/bottom edge
+		const zoneH    = yEdge - textClear; // height of each zone in world units
+
+		const n        = this.toolSprites.length;
+		const topCount = Math.ceil(n / 2);
+		const botCount = n - topCount;
 
 		this.toolSprites.forEach((s, i) => {
-			// Always recompute base positions so grid stays even as sprites load
-			const col = i % cols;
-			const row = Math.floor(i / cols);
-			// Deterministic jitter so positions are stable across calls
-			const jx = Math.sin(i * 127.1 + 311.7) * cellW * 0.28;
-			const jy = Math.sin(i * 269.5 + 183.3) * cellH * 0.28;
+			const inTop    = i < topCount;
+			const localI   = inTop ? i : i - topCount;
+			const localN   = inTop ? topCount : botCount;
+			const cols     = Math.max(2, Math.ceil(Math.sqrt(localN * (clientWidth / Math.max(clientHeight * 0.35, 1)))));
+			const rows     = Math.ceil(localN / cols);
+			const cellW    = (2 * xRange) / cols;
+			const cellH    = zoneH / Math.max(rows, 1);
+			const col      = localI % cols;
+			const row      = Math.floor(localI / cols);
+			// Deterministic jitter — stable across repeated calls as sprites load
+			const jx       = Math.sin(i * 127.1 + 311.7) * cellW * 0.25;
+			const jy       = Math.sin(i * 269.5 + 183.3) * cellH * 0.25;
 			s.userData.floatX = -xRange + (col + 0.5) * cellW + jx;
-			s.userData.floatY =  yRange - (row + 0.5) * cellH + jy;
+			s.userData.floatY = inTop
+				? (yEdge  - (row + 0.5) * cellH) + jy   // top zone
+				: (-textClear - (row + 0.5) * cellH) + jy; // bottom zone
 
-			// Drift parameters set once per sprite (deterministic so they don't reset)
+			// Drift params set once — small amp so icons stay within their zone
 			if (s.userData.floatFreqX === undefined) {
-				s.userData.floatFreqX  = 0.12 + Math.abs(Math.sin(i * 43.7))  * 0.20;
-				s.userData.floatFreqY  = 0.12 + Math.abs(Math.sin(i * 61.3))  * 0.20;
-				s.userData.floatPhaseX = (i * 137.508) % (Math.PI * 2); // golden-angle spread
+				s.userData.floatFreqX  = 0.12 + Math.abs(Math.sin(i * 43.7)) * 0.18;
+				s.userData.floatFreqY  = 0.12 + Math.abs(Math.sin(i * 61.3)) * 0.18;
+				s.userData.floatPhaseX = (i * 137.508) % (Math.PI * 2);
 				s.userData.floatPhaseY = (i * 222.492) % (Math.PI * 2);
-				s.userData.floatAmpX   = 1.2 + Math.abs(Math.sin(i * 79.3))  * 2.0;
-				s.userData.floatAmpY   = 1.2 + Math.abs(Math.sin(i * 53.7))  * 2.0;
+				s.userData.floatAmpX   = 0.8 + Math.abs(Math.sin(i * 79.3)) * 1.2;
+				s.userData.floatAmpY   = 0.6 + Math.abs(Math.sin(i * 53.7)) * 0.9; // tighter in y
 			}
 		});
 	};
@@ -419,11 +430,23 @@ export class HeroFX {
 					}
 				}
 				
-				// Check if velocities are low enough to start return
+				// Check if velocities are low enough to resume normal mode
 				const avgSpeed = this.explodedVelocities.reduce((sum, vel) => sum + vel.length(), 0) / this.explodedVelocities.length;
 				if (avgSpeed < 1.0) {
-					this.explodeState.phase = 'return';
-					this.explodeState.startTime = t;
+					if (this._isPortrait) {
+						// Resume floating from wherever icons settled — no return animation
+						for (const s of this.toolSprites) {
+							s.userData.floatX = s.position.x;
+							s.userData.floatY = s.position.y;
+							// Align phase so sine starts at 0 offset (smooth transition)
+							s.userData.floatPhaseX = -(t * s.userData.floatFreqX);
+							s.userData.floatPhaseY = -(t * s.userData.floatFreqY);
+						}
+						this.explodeState = null;
+					} else {
+						this.explodeState.phase = 'return';
+						this.explodeState.startTime = t;
+					}
 				}
 			} else if (this.explodeState.phase === 'return') {
 				// Return phase: smoothly return to original rotation paths
