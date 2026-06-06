@@ -559,9 +559,9 @@ export class HeroFX {
 					this.renderer.domElement.style.cursor = style;
 					this._lastCursorStyle = style;
 				}
-			} else if (this._isHovering) {
-				// Show static hammer on hover (click is blocked by explodeState guard in _onClick)
-				const url = this._getHammerCursor(this.hammerRotation);
+			} else if (this._isHovering || this.explodeState) {
+				// Static hammer: hovering over sprites, or icons are mid-explosion/return
+				const url = this._getHammerCursor(0);
 				const style = `url(${url}) 64 64, pointer`;
 				if (this._lastCursorStyle !== style) {
 					this.renderer.domElement.style.cursor = style;
