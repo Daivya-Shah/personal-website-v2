@@ -266,6 +266,14 @@ export class HeroFX {
 
 	_onMouseMove = (e) => {
 		const rect = this.containerEl.getBoundingClientRect();
+
+		// Ignore mouse events outside the banner — prevents scroll-away from tilting the orbit
+		if (e.clientX < rect.left || e.clientX > rect.right ||
+		    e.clientY < rect.top  || e.clientY > rect.bottom) {
+			this._isHovering = false;
+			return;
+		}
+
 		this.mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
 		this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
