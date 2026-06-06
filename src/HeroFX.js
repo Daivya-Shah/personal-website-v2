@@ -164,11 +164,15 @@ export class HeroFX {
 		for (const s of this.toolSprites || []) maxPlannedRadius = Math.max(maxPlannedRadius, (s.userData && s.userData.radius) || 0);
 		const maxAllowedX = Math.max(1, halfW - safety - spriteHalf);
 		this.xScale = Math.min(1.5, maxAllowedX / Math.max(1, maxPlannedRadius));
+		const ratio = spriteScale / 8;
 		const yGap = spriteScale * 0.475; // 3.8/8 — keeps label flush under icon at any size
 		for (const s of this.toolSprites || []) {
 			s.scale.set(spriteScale, spriteScale, 1);
 			if (s.userData.label) {
-				s.userData.label.userData.yGap = yGap;
+				const lbl = s.userData.label;
+				const newLabelH = (lbl.userData.baseH || 2.2) * ratio;
+				lbl.scale.set(newLabelH * (lbl.userData.aspect || 1), newLabelH, 1);
+				lbl.userData.yGap = yGap;
 			}
 		}
 	};
@@ -571,7 +575,7 @@ export class HeroFX {
 			const labelH = 2.2;
 			const aspect = labelTex.image.width / Math.max(1, labelTex.image.height);
 			label.scale.set(labelH * aspect, labelH, 1);
-			label.userData = { parent: sprite, yGap: 3.8 };
+			label.userData = { parent: sprite, yGap: 3.8, baseH: labelH, aspect };
 			sprite.userData.label = label;
 			this.group.add(label);
 
