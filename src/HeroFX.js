@@ -32,6 +32,7 @@ export class HeroFX {
 		this._hoverCursorCache = { rotation: null, url: null };
 		this._lastCursorStyle = 'default';
 		this._isHovering = false;
+		this._isPortrait = false;
 
 		// Rasterize SVGs at high resolution: Simple Icons decode tiny (~24px) by default;
 		// sampling that up for THREE.Sprites is very blurry on iOS Safari WebGL.
@@ -164,6 +165,8 @@ export class HeroFX {
 		for (const s of this.toolSprites || []) maxPlannedRadius = Math.max(maxPlannedRadius, (s.userData && s.userData.radius) || 0);
 		const maxAllowedX = Math.max(1, halfW - safety - spriteHalf);
 		this.xScale = Math.min(1.5, maxAllowedX / Math.max(1, maxPlannedRadius));
+		this._isPortrait = isPortrait;
+
 		const ratio = spriteScale / 8;
 		const yGap = spriteScale * 0.475; // 3.8/8 — keeps label flush under icon at any size
 		for (const s of this.toolSprites || []) {
@@ -175,6 +178,35 @@ export class HeroFX {
 				lbl.userData.yGap = yGap;
 			}
 		}
+
+		if (isPortrait) this._initFloatPositions();
+	};
+
+	_initFloatPositions = () => {
+		if (!this.toolSprites || this.toolSprites.length === 0) return;
+		const { clientWidth, clientHeight } = this.containerEl;
+		const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * this.camera.position.z;
+		const halfW = halfH * (clientWidth / Math.max(clientHeight, 1));
+		const xRange = halfW * 0.78;
+		const yRange = halfH * 0.72;
+		const n = this.toolSprites.length;
+		const cols = Math.max(2, Math.ceil(Math.sqrt(n * (clientWidth / Math.max(clientHeight, 1)))));
+		const rows = Math.ceil(n / cols);
+		this.toolSprites.forEach((s, i) => {
+			if (s.userData.floatX !== undefined) return; // initialised once per sprite
+			const col = i % cols;
+			const row = Math.floor(i / cols);
+			const cellW = (2 * xRange) / cols;
+			const cellH = (2 * yRange) / rows;
+			s.userData.floatX = -xRange + (col + 0.5) * cellW + (Math.random() - 0.5) * cellW * 0.6;
+			s.userData.floatY =  yRange - (row + 0.5) * cellH + (Math.random() - 0.5) * cellH * 0.6;
+			s.userData.floatFreqX  = 0.12 + Math.random() * 0.20;
+			s.userData.floatFreqY  = 0.12 + Math.random() * 0.20;
+			s.userData.floatPhaseX = Math.random() * Math.PI * 2;
+			s.userData.floatPhaseY = Math.random() * Math.PI * 2;
+			s.userData.floatAmpX   = 1.2 + Math.random() * 2.0;
+			s.userData.floatAmpY   = 1.2 + Math.random() * 2.0;
+		});
 	};
 
 	_getHammerCursor = (rotation = 0) => {
@@ -230,21 +262,19 @@ export class HeroFX {
 		const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
 		const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 		
-		this._mouseWorld.set(x * 50, y * 40, 0);
+		const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * this.camera.position.z;
+		const halfW = halfH * this.camera.aspect;
+		this._mouseWorld.set(x * halfW, y * halfH, 0);
 		const clickWorldPos = this._mouseWorld;
 
-		let clickedSprite = false;
-		const clickThreshold = 15;
-
-		for (const sprite of this.toolSprites) {
-			const distance = sprite.position.distanceTo(clickWorldPos);
-			if (distance < clickThreshold) {
-				clickedSprite = true;
-				break;
+		// On portrait (floating mode) any tap explodes; on desktop require hitting a sprite
+		if (!this._isPortrait) {
+			let clickedSprite = false;
+			for (const sprite of this.toolSprites) {
+				if (sprite.position.distanceTo(clickWorldPos) < 15) { clickedSprite = true; break; }
 			}
+			if (!clickedSprite) return;
 		}
-		
-		if (!clickedSprite) return;
 
 		this.renderer.domElement.style.cursor = 'default';
 		this._lastCursorStyle = 'default';
@@ -419,29 +449,41 @@ export class HeroFX {
 					}
 				}
 				
-				// End animation and resume normal rotation only when all are done
+				// End animation and resume normal mode only when all are done
 				if (allComplete) {
-					// Recalculate angle offsets for seamless continuation from current positions
-					const currentTime = this.clock.getElapsedTime();
-					for (let i = 0; i < this.toolSprites.length; i++) {
-						const s = this.toolSprites[i];
-						const radius = s.userData.radius || 45;
-						const circleScale = Math.min(this.xScale || 1, 0.70);
-						
-						// Calculate current angle based on x, y position
-						const scaledX = s.position.x / circleScale;
-						const scaledY = (s.position.y - s.userData.yOffset) / circleScale;
-						const currentAngle = Math.atan2(scaledY, scaledX);
-						
-						// Adjust angle offset so sprite continues from current position
-						s.userData.angleOffset = currentAngle - (currentTime * s.userData.speed);
+					if (!this._isPortrait) {
+						// Recalculate angle offsets for seamless orbit continuation (desktop only)
+						const currentTime = this.clock.getElapsedTime();
+						for (let i = 0; i < this.toolSprites.length; i++) {
+							const s = this.toolSprites[i];
+							const circleScale = Math.min(this.xScale || 1, 0.70);
+							const scaledX = s.position.x / circleScale;
+							const scaledY = (s.position.y - s.userData.yOffset) / circleScale;
+							const currentAngle = Math.atan2(scaledY, scaledX);
+							s.userData.angleOffset = currentAngle - (currentTime * s.userData.speed);
+						}
 					}
-					
 					this.explodeState = null;
 				}
 			}
+		} else if (this._isPortrait) {
+			// Floating mode on mobile — icons drift naturally across the banner
+			this.group.rotation.set(0, 0, 0);
+			if (this.toolSprites) {
+				for (let i = 0; i < this.toolSprites.length; i++) {
+					const s = this.toolSprites[i];
+					if (s.userData.floatX === undefined) continue;
+					const x = s.userData.floatX + Math.sin(t * s.userData.floatFreqX + s.userData.floatPhaseX) * s.userData.floatAmpX;
+					const y = s.userData.floatY + Math.sin(t * s.userData.floatFreqY + s.userData.floatPhaseY) * s.userData.floatAmpY;
+					s.position.set(x, y, 0);
+					if (s.userData.label) {
+						const lbl = s.userData.label;
+						lbl.position.set(x, y - (lbl.userData.yGap || 3.8), 0);
+					}
+				}
+			}
 		} else {
-			// Normal rotation
+			// Orbit mode on desktop/landscape
 			this.group.rotation.y = this.mouse.x * 0.12;
 			this.group.rotation.x = this.mouse.y * 0.08;
 
