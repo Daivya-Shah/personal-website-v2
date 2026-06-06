@@ -199,7 +199,7 @@ export class HeroFX {
 		const yEdge  = halfH * 0.72;
 
 		// Text block footprint in world units — icons inside this rect are skipped
-		const textClearY = 8;  // ± world units vertically around centre
+		const textClearY = 16; // ± world units vertically around centre
 		const textClearX = 11; // ± world units horizontally (text column width)
 
 		// Build a full-banner grid and collect valid (non-text) slots
