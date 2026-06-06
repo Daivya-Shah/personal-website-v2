@@ -157,6 +157,14 @@ export class HeroFX {
 		for (const s of this.toolSprites || []) maxPlannedRadius = Math.max(maxPlannedRadius, (s.userData && s.userData.radius) || 0);
 		const maxAllowedX = Math.max(1, halfW - safety - spriteHalf);
 		this.xScale = Math.min(1.5, maxAllowedX / Math.max(1, maxPlannedRadius));
+
+		// On portrait containers (mobile) the same world-unit scale maps to more pixels
+		// because the canvas is taller. Scale sprites down proportionally so they appear
+		// the same physical size regardless of banner height.
+		const spriteScale = 8 * Math.min(1, clientWidth / Math.max(1, clientHeight));
+		for (const s of this.toolSprites || []) {
+			s.scale.set(spriteScale, spriteScale, 1);
+		}
 	};
 
 	_getHammerCursor = (rotation = 0) => {
