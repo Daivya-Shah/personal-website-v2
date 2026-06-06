@@ -192,20 +192,28 @@ export class HeroFX {
 		const n = this.toolSprites.length;
 		const cols = Math.max(2, Math.ceil(Math.sqrt(n * (clientWidth / Math.max(clientHeight, 1)))));
 		const rows = Math.ceil(n / cols);
+		const cellW = (2 * xRange) / cols;
+		const cellH = (2 * yRange) / rows;
+
 		this.toolSprites.forEach((s, i) => {
-			if (s.userData.floatX !== undefined) return; // initialised once per sprite
+			// Always recompute base positions so grid stays even as sprites load
 			const col = i % cols;
 			const row = Math.floor(i / cols);
-			const cellW = (2 * xRange) / cols;
-			const cellH = (2 * yRange) / rows;
-			s.userData.floatX = -xRange + (col + 0.5) * cellW + (Math.random() - 0.5) * cellW * 0.6;
-			s.userData.floatY =  yRange - (row + 0.5) * cellH + (Math.random() - 0.5) * cellH * 0.6;
-			s.userData.floatFreqX  = 0.12 + Math.random() * 0.20;
-			s.userData.floatFreqY  = 0.12 + Math.random() * 0.20;
-			s.userData.floatPhaseX = Math.random() * Math.PI * 2;
-			s.userData.floatPhaseY = Math.random() * Math.PI * 2;
-			s.userData.floatAmpX   = 1.2 + Math.random() * 2.0;
-			s.userData.floatAmpY   = 1.2 + Math.random() * 2.0;
+			// Deterministic jitter so positions are stable across calls
+			const jx = Math.sin(i * 127.1 + 311.7) * cellW * 0.28;
+			const jy = Math.sin(i * 269.5 + 183.3) * cellH * 0.28;
+			s.userData.floatX = -xRange + (col + 0.5) * cellW + jx;
+			s.userData.floatY =  yRange - (row + 0.5) * cellH + jy;
+
+			// Drift parameters set once per sprite (deterministic so they don't reset)
+			if (s.userData.floatFreqX === undefined) {
+				s.userData.floatFreqX  = 0.12 + Math.abs(Math.sin(i * 43.7))  * 0.20;
+				s.userData.floatFreqY  = 0.12 + Math.abs(Math.sin(i * 61.3))  * 0.20;
+				s.userData.floatPhaseX = (i * 137.508) % (Math.PI * 2); // golden-angle spread
+				s.userData.floatPhaseY = (i * 222.492) % (Math.PI * 2);
+				s.userData.floatAmpX   = 1.2 + Math.abs(Math.sin(i * 79.3))  * 2.0;
+				s.userData.floatAmpY   = 1.2 + Math.abs(Math.sin(i * 53.7))  * 2.0;
+			}
 		});
 	};
 
