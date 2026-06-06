@@ -360,11 +360,19 @@
 				min-height: 100dvh;
 				box-sizing: border-box;
 				padding-top: 3em;
+				position: relative;
+				clip-path: inset(0 0 0 0);
+			}
+			#experience-banner::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				z-index: -1;
 				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-attachment: fixed;
 				background-position: center center;
 				background-repeat: no-repeat;
 				background-size: cover;
+				pointer-events: none;
 			}
 			
 			#experience-banner .inner {
@@ -392,11 +400,19 @@
 				min-height: 100dvh;
 				box-sizing: border-box;
 				padding-top: 3em;
+				position: relative;
+				clip-path: inset(0 0 0 0);
+			}
+			#projects-banner::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				z-index: -1;
 				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-attachment: fixed;
 				background-position: center center;
 				background-repeat: no-repeat;
 				background-size: cover;
+				pointer-events: none;
 			}
 			
 			#projects-banner .inner {
@@ -415,14 +431,21 @@
 			
 			/* Main hero banner background on all layouts */
 			#banner {
-				position: relative; /* ensure absolute children (fx-layer) can fill */
+				position: relative;
 				height: 100dvh !important;
 				min-height: 100dvh !important;
+				clip-path: inset(0 0 0 0);
+			}
+			#banner::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				z-index: -1;
 				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-attachment: fixed;
 				background-position: center center;
 				background-repeat: no-repeat;
 				background-size: cover;
+				pointer-events: none;
 			}
 			#banner .fx-layer { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
 			#banner .inner { position: relative; z-index: 1; }
