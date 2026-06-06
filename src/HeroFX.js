@@ -157,6 +157,9 @@ export class HeroFX {
 		// because the canvas is taller. Scale sprites and their label gap proportionally.
 		const spriteScale = 8 * Math.min(1, clientWidth / Math.max(1, clientHeight));
 
+		// On portrait, stretch the y-radius so the orbit fills the tall screen properly
+		this.orbitYScale = isPortrait ? 1.7 : 1.0;
+
 		// Use tighter margins on mobile so the orbit radius is larger relative to the screen
 		const safety = isPortrait ? 1 : 4;
 		const spriteHalf = isPortrait ? spriteScale / 2 : 3.25;
@@ -428,9 +431,9 @@ export class HeroFX {
 						const radius = s.userData.radius || 45;
 						const circleScale = Math.min(this.xScale || 1, 0.70);
 						
-						// Calculate current angle based on x, y position
+						// Calculate current angle based on x, y position (undo both scales)
 						const scaledX = s.position.x / circleScale;
-						const scaledY = (s.position.y - s.userData.yOffset) / circleScale;
+						const scaledY = (s.position.y - s.userData.yOffset) / (circleScale * (this.orbitYScale || 1));
 						const currentAngle = Math.atan2(scaledY, scaledX);
 						
 						// Adjust angle offset so sprite continues from current position
@@ -455,7 +458,7 @@ export class HeroFX {
 					const sa = Math.sin(a);
 					const ca = Math.cos(a);
 					s.position.x = ca * r;
-					s.position.y = sa * r + (s.userData.yOffset || 0);
+					s.position.y = sa * r * (this.orbitYScale || 1) + (s.userData.yOffset || 0);
 					s.position.z = sa * 2;
 					if (s.userData.label) {
 						const lbl = s.userData.label;
