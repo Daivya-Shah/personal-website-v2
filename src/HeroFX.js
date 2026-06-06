@@ -151,16 +151,19 @@ export class HeroFX {
 		// compute bounds for horizontal scaling
 		const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * this.camera.position.z;
 		const halfW = halfH * this.camera.aspect;
-		const safety = 4;
-		const spriteHalf = 3.25;
-		let maxPlannedRadius = 1;
-		for (const s of this.toolSprites || []) maxPlannedRadius = Math.max(maxPlannedRadius, (s.userData && s.userData.radius) || 0);
-		const maxAllowedX = Math.max(1, halfW - safety - spriteHalf);
-		this.xScale = Math.min(1.5, maxAllowedX / Math.max(1, maxPlannedRadius));
+		const isPortrait = clientWidth < clientHeight;
 
 		// On portrait containers (mobile) the same world-unit scale maps to more pixels
 		// because the canvas is taller. Scale sprites and their label gap proportionally.
 		const spriteScale = 8 * Math.min(1, clientWidth / Math.max(1, clientHeight));
+
+		// Use tighter margins on mobile so the orbit radius is larger relative to the screen
+		const safety = isPortrait ? 1 : 4;
+		const spriteHalf = isPortrait ? spriteScale / 2 : 3.25;
+		let maxPlannedRadius = 1;
+		for (const s of this.toolSprites || []) maxPlannedRadius = Math.max(maxPlannedRadius, (s.userData && s.userData.radius) || 0);
+		const maxAllowedX = Math.max(1, halfW - safety - spriteHalf);
+		this.xScale = Math.min(1.5, maxAllowedX / Math.max(1, maxPlannedRadius));
 		const yGap = spriteScale * 0.475; // 3.8/8 — keeps label flush under icon at any size
 		for (const s of this.toolSprites || []) {
 			s.scale.set(spriteScale, spriteScale, 1);
