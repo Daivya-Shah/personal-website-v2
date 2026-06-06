@@ -33,6 +33,7 @@ export class HeroFX {
 		this._lastCursorStyle = 'default';
 		this._isHovering = false;
 		this._isPortrait = false;
+		this._floatSpriteCount = 0;
 
 		// Rasterize SVGs at high resolution: Simple Icons decode tiny (~24px) by default;
 		// sampling that up for THREE.Sprites is very blurry on iOS Safari WebGL.
@@ -179,7 +180,14 @@ export class HeroFX {
 			}
 		}
 
-		if (isPortrait) this._initFloatPositions();
+		if (isPortrait) {
+			// Only reinitialize when a new sprite has loaded — NOT on every resize/scroll event
+			const currentCount = (this.toolSprites || []).length;
+			if (currentCount !== this._floatSpriteCount) {
+				this._floatSpriteCount = currentCount;
+				this._initFloatPositions();
+			}
+		}
 	};
 
 	_initFloatPositions = () => {
@@ -187,43 +195,45 @@ export class HeroFX {
 		const { clientWidth, clientHeight } = this.containerEl;
 		const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * this.camera.position.z;
 		const halfW = halfH * (clientWidth / Math.max(clientHeight, 1));
-		const xRange = halfW * 0.80;
+		const xRange = halfW * 0.82;
+		const yEdge  = halfH * 0.72;
 
-		// Keep icons out of the center text area (h2 + tagline + buttons ≈ ±10 world units)
-		const textClear = 10;
-		const yEdge    = halfH * 0.68; // don't go all the way to the very top/bottom edge
-		const zoneH    = yEdge - textClear; // height of each zone in world units
+		// Text block footprint in world units — icons inside this rect are skipped
+		const textClearY = 8;  // ± world units vertically around centre
+		const textClearX = 11; // ± world units horizontally (text column width)
 
-		const n        = this.toolSprites.length;
-		const topCount = Math.ceil(n / 2);
-		const botCount = n - topCount;
+		// Build a full-banner grid and collect valid (non-text) slots
+		const COLS = 4, ROWS = 10;
+		const cellW = (2 * xRange) / COLS;
+		const cellH = (2 * yEdge)  / ROWS;
+		const slots = [];
+		for (let r = 0; r < ROWS; r++) {
+			for (let c = 0; c < COLS; c++) {
+				const cx =  -xRange + (c + 0.5) * cellW;
+				const cy =   yEdge  - (r + 0.5) * cellH;
+				// Allow slots beside the text (outside textClearX) even at text height
+				if (Math.abs(cy) < textClearY && Math.abs(cx) < textClearX) continue;
+				slots.push({ cx, cy });
+			}
+		}
 
+		// Distribute sprites evenly across available slots
+		const n    = this.toolSprites.length;
+		const step = slots.length / Math.max(n, 1);
 		this.toolSprites.forEach((s, i) => {
-			const inTop    = i < topCount;
-			const localI   = inTop ? i : i - topCount;
-			const localN   = inTop ? topCount : botCount;
-			const cols     = Math.max(2, Math.ceil(Math.sqrt(localN * (clientWidth / Math.max(clientHeight * 0.35, 1)))));
-			const rows     = Math.ceil(localN / cols);
-			const cellW    = (2 * xRange) / cols;
-			const cellH    = zoneH / Math.max(rows, 1);
-			const col      = localI % cols;
-			const row      = Math.floor(localI / cols);
-			// Deterministic jitter — stable across repeated calls as sprites load
-			const jx       = Math.sin(i * 127.1 + 311.7) * cellW * 0.25;
-			const jy       = Math.sin(i * 269.5 + 183.3) * cellH * 0.25;
-			s.userData.floatX = -xRange + (col + 0.5) * cellW + jx;
-			s.userData.floatY = inTop
-				? (yEdge  - (row + 0.5) * cellH) + jy   // top zone
-				: (-textClear - (row + 0.5) * cellH) + jy; // bottom zone
+			const slot = slots[Math.round(i * step) % slots.length];
+			const jx   = Math.sin(i * 127.1 + 311.7) * cellW * 0.22;
+			const jy   = Math.sin(i * 269.5 + 183.3) * cellH * 0.22;
+			s.userData.floatX = slot.cx + jx;
+			s.userData.floatY = slot.cy + jy;
 
-			// Drift params set once — small amp so icons stay within their zone
 			if (s.userData.floatFreqX === undefined) {
 				s.userData.floatFreqX  = 0.12 + Math.abs(Math.sin(i * 43.7)) * 0.18;
 				s.userData.floatFreqY  = 0.12 + Math.abs(Math.sin(i * 61.3)) * 0.18;
 				s.userData.floatPhaseX = (i * 137.508) % (Math.PI * 2);
 				s.userData.floatPhaseY = (i * 222.492) % (Math.PI * 2);
 				s.userData.floatAmpX   = 0.8 + Math.abs(Math.sin(i * 79.3)) * 1.2;
-				s.userData.floatAmpY   = 0.6 + Math.abs(Math.sin(i * 53.7)) * 0.9; // tighter in y
+				s.userData.floatAmpY   = 0.6 + Math.abs(Math.sin(i * 53.7)) * 0.8;
 			}
 		});
 	};
