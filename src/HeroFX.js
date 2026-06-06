@@ -271,7 +271,9 @@ export class HeroFX {
 
 		// Update hover flag — cursor is applied inside _animate to stay off the mouse-event path
 		if (!this.explodeState && this.toolSprites) {
-			this._mouseWorld.set(this.mouse.x * 50, this.mouse.y * 40, 0);
+			const halfH = Math.tan(THREE.MathUtils.degToRad(this.camera.fov * 0.5)) * this.camera.position.z;
+			const halfW = halfH * this.camera.aspect;
+			this._mouseWorld.set(this.mouse.x * halfW, this.mouse.y * halfH, 0);
 			let hovering = false;
 			for (const sprite of this.toolSprites) {
 				if (sprite.position.distanceTo(this._mouseWorld) < 15) { hovering = true; break; }
@@ -305,8 +307,6 @@ export class HeroFX {
 			if (!clickedSprite) return;
 		}
 
-		this.renderer.domElement.style.cursor = 'default';
-		this._lastCursorStyle = 'default';
 		this._isHovering = false;
 
 		// Start hammer rotation animation
@@ -547,8 +547,20 @@ export class HeroFX {
 				}
 			}
 
-			// Update cursor once per frame (not on every mousemove)
-			if (this._isHovering) {
+		}
+
+		// Cursor update — runs for all non-portrait modes
+		if (!this._isPortrait) {
+			if (this.hammerAnimation) {
+				// Show animated swing while hammer animation is playing
+				const url = this._getHammerCursor(this.hammerRotation);
+				const style = `url(${url}) 64 64, pointer`;
+				if (this._lastCursorStyle !== style) {
+					this.renderer.domElement.style.cursor = style;
+					this._lastCursorStyle = style;
+				}
+			} else if (this._isHovering && !this.explodeState) {
+				// Show static hammer on hover
 				const url = this._getHammerCursor(this.hammerRotation);
 				const style = `url(${url}) 64 64, pointer`;
 				if (this._lastCursorStyle !== style) {
@@ -560,7 +572,7 @@ export class HeroFX {
 				this._lastCursorStyle = 'default';
 			}
 		}
-		
+
 		this.renderer.render(this.scene, this.camera);
 	};
 
