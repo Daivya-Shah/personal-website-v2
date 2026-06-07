@@ -318,9 +318,17 @@
 		margin: 0 !important;
 	}
 
-	/* Banner action buttons (LinkedIn, GitHub, Resume) - uniform width */
+	/* Wrap both button rows so the row-to-row gap matches the LinkedIn<->GitHub gap (both 0.75em) */
+	#banner .banner-button-rows {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: center !important;
+		gap: 0.75em !important;
+	}
+
+	/* Banner action buttons (LinkedIn, GitHub, Resume) - uniform width matching "LinkedIn" (longest label) + its padding */
 	#banner .actions.special .button {
-		width: 8.5em !important;
+		width: calc(8ch + 2.4em) !important;
 		text-align: center !important;
 	}
 
@@ -748,13 +756,15 @@
 						<div class="inner">
 							<h2>Daivya Shah</h2>
 							<p class="tagline">Building things and breaking them slightly less each time</p>
-							<ul class="actions special">
-								<li><a href="https://www.linkedin.com/in/daivya-shah/" class="button primary" target="_blank" rel="noopener">LinkedIn</a></li>
-								<li><a href="https://github.com/Daivya-Shah" class="button primary" target="_blank" rel="noopener">GitHub</a></li>
-							</ul>
-							<ul class="actions special">
-								<li><button type="button" class="button primary" id="resume-request-button">Resume</button></li>
-							</ul>
+							<div class="banner-button-rows">
+								<ul class="actions special">
+									<li><a href="https://www.linkedin.com/in/daivya-shah/" class="button primary" target="_blank" rel="noopener">LinkedIn</a></li>
+									<li><a href="https://github.com/Daivya-Shah" class="button primary" target="_blank" rel="noopener">GitHub</a></li>
+								</ul>
+								<ul class="actions special">
+									<li><button type="button" class="button primary" id="resume-request-button">Resume</button></li>
+								</ul>
+							</div>
 						</div>
 					</section>
 
