@@ -326,9 +326,10 @@
 		gap: 0.75em !important;
 	}
 
-	/* Banner action buttons (LinkedIn, GitHub, Resume) - uniform width matching "LinkedIn" (longest label) + its padding */
+	/* Banner action buttons (LinkedIn, GitHub, Resume) - GitHub/Resume widths are synced to
+	   LinkedIn's actual rendered width via JS (see script near end of body), since the
+	   uppercase transform + letter-spacing make ch-based estimates inaccurate. */
 	#banner .actions.special .button {
-		width: calc(8ch + 2.4em) !important;
 		text-align: center !important;
 	}
 
@@ -1329,6 +1330,27 @@
 					}
 				})();
 			</script>
+
+		<!-- Sync GitHub/Resume banner button widths to LinkedIn's actual rendered width -->
+		<script>
+			(function () {
+				function syncBannerButtonWidths() {
+					var linkedin = document.querySelector('#banner .actions.special a[href*="linkedin.com"]');
+					var others = document.querySelectorAll('#banner .actions.special .button:not([href*="linkedin.com"])');
+					if (!linkedin || !others.length) return;
+					linkedin.style.width = '';
+					var width = linkedin.getBoundingClientRect().width;
+					if (!width) return;
+					others.forEach(function (el) { el.style.width = width + 'px'; });
+				}
+				var run = function () { syncBannerButtonWidths(); };
+				if (document.fonts && document.fonts.ready) {
+					document.fonts.ready.then(run);
+				}
+				window.addEventListener('load', run);
+				window.addEventListener('resize', run);
+			})();
+		</script>
 
 		<script>
 			(async () => {
