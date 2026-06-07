@@ -262,8 +262,6 @@
 		#experience-banner .actions .button,
 		#projects-banner .actions .button,
 		#contact .actions .button {
-			font-size: 0.7rem !important;
-			padding: 0 1.2em !important;
 			white-space: nowrap !important;
 			display: inline-block !important;
 			width: auto !important;
@@ -272,8 +270,6 @@
 			box-sizing: border-box !important;
 			flex-shrink: 0 !important;
 			vertical-align: middle !important;
-			line-height: 2.75em !important;
-			height: 2.75em !important;
 			margin: 0 !important;
 		}
 
@@ -293,6 +289,17 @@
 		}
 
 		@media screen and (max-width: 736px) {
+			/* Compact sizing for the banner LinkedIn/GitHub/Resume buttons on mobile */
+			#banner .actions .button,
+			#banner .actions.special .button,
+			#banner .actions.special a.button,
+			#banner .actions.special button.button {
+				font-size: 0.7rem !important;
+				padding: 0 1.2em !important;
+				line-height: 2.75em !important;
+				height: 2.75em !important;
+			}
+
 			/* Global button sizing on mobile */
 			input[type="submit"],
 			input[type="reset"],
