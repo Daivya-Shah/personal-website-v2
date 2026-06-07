@@ -590,7 +590,6 @@
 			#contact {
 				position: relative;
 				clip-path: inset(0 0 0 0);
-				height: 100dvh;
 				min-height: 100dvh;
 				box-sizing: border-box;
 				display: flex;
@@ -614,9 +613,11 @@
 			@media screen and (max-width: 736px) {
 				#banner,
 				#experience-banner,
-				#projects-banner,
-				#contact {
+				#projects-banner {
 					height: 100dvh !important;
+					min-height: 100dvh !important;
+				}
+				#contact {
 					min-height: 100dvh !important;
 				}
 			}
