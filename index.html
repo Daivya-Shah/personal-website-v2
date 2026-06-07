@@ -701,7 +701,10 @@
 				background: rgba(255,255,255,0.08);
 			}
 
-			/* Match body bg to footer so the page visually ends at the footer (no lighter gray strip below it on overscroll) */
+			/* Match html and body bg to footer so the page visually ends at the footer.
+			   iOS Safari paints the rubber-band overscroll/bounce area using the <html> canvas
+			   background, not <body>, so html needs its own matching background-color too. */
+			html,
 			body {
 				background-color: #1d242a;
 			}
