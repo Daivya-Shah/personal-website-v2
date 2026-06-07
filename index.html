@@ -586,13 +586,21 @@
 			#contact .contact-form input:focus,
 			#contact .contact-form textarea:focus { outline: none; border-color: #21b2a6; box-shadow: 0 0 0 2px rgba(33,178,166,0.2); }
 
-			/* Let's Connect - Parallax background like banners */
+			/* Let's Connect - Parallax background like the other 3 banners */
 			#contact {
+				position: relative;
+				clip-path: inset(0 0 0 0);
+			}
+			#contact::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				z-index: -1;
 				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-attachment: fixed;
 				background-position: center center;
 				background-repeat: no-repeat;
 				background-size: cover;
+				pointer-events: none;
 			}
 
 			/* Mobile: all section banners fill full screen height */
