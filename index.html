@@ -769,6 +769,34 @@
 						</div>
 					</section>
 
+		<!-- Sync GitHub/Resume banner button widths to LinkedIn's actual rendered width -->
+		<!-- Placed immediately after the banner markup (and runs synchronously on parse) so all
+			 three buttons match LinkedIn's size from the very first paint, with no visible jump. -->
+		<script>
+			(function () {
+				function syncBannerButtonWidths() {
+					var linkedin = document.querySelector('#banner .actions.special a[href*="linkedin.com"]');
+					var others = document.querySelectorAll('#banner .actions.special .button:not([href*="linkedin.com"])');
+					if (!linkedin || !others.length) return;
+					linkedin.style.removeProperty('width');
+					var width = linkedin.getBoundingClientRect().width;
+					if (!width) return;
+					others.forEach(function (el) {
+						el.style.setProperty('width', width + 'px', 'important');
+					});
+				}
+				var run = function () { syncBannerButtonWidths(); };
+				// Run immediately on parse (elements above already exist), then re-run once
+				// fonts/assets finish loading in case metrics shift slightly.
+				run();
+				if (document.fonts && document.fonts.ready) {
+					document.fonts.ready.then(run);
+				}
+				window.addEventListener('load', run);
+				window.addEventListener('resize', run);
+			})();
+		</script>
+
 				<!-- About -->
 					<section id="about" class="wrapper style1 special">
 						<div class="inner">
@@ -1330,29 +1358,6 @@
 					}
 				})();
 			</script>
-
-		<!-- Sync GitHub/Resume banner button widths to LinkedIn's actual rendered width -->
-		<script>
-			(function () {
-				function syncBannerButtonWidths() {
-					var linkedin = document.querySelector('#banner .actions.special a[href*="linkedin.com"]');
-					var others = document.querySelectorAll('#banner .actions.special .button:not([href*="linkedin.com"])');
-					if (!linkedin || !others.length) return;
-					linkedin.style.removeProperty('width');
-					var width = linkedin.getBoundingClientRect().width;
-					if (!width) return;
-					others.forEach(function (el) {
-						el.style.setProperty('width', width + 'px', 'important');
-					});
-				}
-				var run = function () { syncBannerButtonWidths(); };
-				if (document.fonts && document.fonts.ready) {
-					document.fonts.ready.then(run);
-				}
-				window.addEventListener('load', run);
-				window.addEventListener('resize', run);
-			})();
-		</script>
 
 		<script>
 			(async () => {
