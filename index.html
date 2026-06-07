@@ -184,6 +184,114 @@
 			}
 
 		/* Mobile phone button fixes - responsive sizing for all buttons */
+		/* Banner - equidistant spacing on all layouts (desktop and mobile) */
+		#banner .inner,
+		#experience-banner .inner,
+		#projects-banner .inner {
+			display: flex !important;
+			flex-direction: column !important;
+			justify-content: center !important;
+			align-items: center !important;
+			gap: 1.5em !important;
+			padding: 2em 1.5em !important;
+			width: 100% !important;
+			max-width: 100% !important;
+			box-sizing: border-box !important;
+		}
+
+		/* Ensure actions container inside banner doesn't get constrained */
+		#banner .inner .actions,
+		#banner .inner .actions.special {
+			width: auto !important;
+			max-width: 100% !important;
+			min-width: 0 !important;
+		}
+
+		#banner h2,
+		#experience-banner h2,
+		#projects-banner h2 {
+			margin: 0 !important;
+		}
+
+		#banner .tagline,
+		#banner p,
+		#experience-banner p,
+		#projects-banner p {
+			margin: 0 !important;
+		}
+
+		/* Banner buttons (LinkedIn, Resume, etc.) - side by side - MUST stay on one line */
+		#banner .actions,
+		#banner .actions.special,
+		#experience-banner .actions,
+		#projects-banner .actions,
+		#contact .actions {
+			display: flex !important;
+			flex-direction: row !important;
+			justify-content: center !important;
+			align-items: center !important;
+			gap: 0.75em !important;
+			flex-wrap: nowrap !important;
+			margin: 0 !important;
+			width: 100% !important;
+			max-width: 100% !important;
+			overflow: visible !important;
+		}
+
+		#banner .actions li,
+		#banner .actions.special li,
+		#experience-banner .actions li,
+		#projects-banner .actions li,
+		#contact .actions li {
+			display: inline-block !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			flex-shrink: 0 !important;
+			flex-grow: 0 !important;
+			min-width: auto !important;
+			width: auto !important;
+			max-width: none !important;
+			vertical-align: middle !important;
+			line-height: 1 !important;
+		}
+
+		#banner .actions .button,
+		#banner .actions.special .button,
+		#banner .actions.special a.button,
+		#banner .actions.special button.button,
+		#experience-banner .actions .button,
+		#projects-banner .actions .button,
+		#contact .actions .button {
+			font-size: 0.7rem !important;
+			padding: 0 1.2em !important;
+			white-space: nowrap !important;
+			display: inline-block !important;
+			width: auto !important;
+			max-width: none !important;
+			min-width: auto !important;
+			box-sizing: border-box !important;
+			flex-shrink: 0 !important;
+			vertical-align: middle !important;
+			line-height: 2.75em !important;
+			height: 2.75em !important;
+			margin: 0 !important;
+		}
+
+		/* Wrap both button rows so the row-to-row gap visually matches the LinkedIn<->GitHub gap */
+		#banner .banner-button-rows {
+			display: flex !important;
+			flex-direction: column !important;
+			align-items: center !important;
+			gap: 0.5em !important;
+		}
+
+		/* Banner action buttons (LinkedIn, GitHub, Resume) - GitHub/Resume widths are synced to
+		   LinkedIn's actual rendered width via JS (see script after the banner markup), since the
+		   uppercase transform + letter-spacing make ch-based estimates inaccurate. */
+		#banner .actions.special .button {
+			text-align: center !important;
+		}
+
 		@media screen and (max-width: 736px) {
 			/* Global button sizing on mobile */
 			input[type="submit"],
@@ -225,114 +333,6 @@
 				flex-shrink: 0;
 			}
 			
-	/* Banner - equidistant spacing on mobile */
-	#banner .inner,
-	#experience-banner .inner,
-	#projects-banner .inner {
-		display: flex !important;
-		flex-direction: column !important;
-		justify-content: center !important;
-		align-items: center !important;
-		gap: 1.5em !important;
-		padding: 2em 1.5em !important;
-		width: 100% !important;
-		max-width: 100% !important;
-		box-sizing: border-box !important;
-	}
-	
-	/* Ensure actions container inside banner doesn't get constrained */
-	#banner .inner .actions,
-	#banner .inner .actions.special {
-		width: auto !important;
-		max-width: 100% !important;
-		min-width: 0 !important;
-	}
-	
-	#banner h2,
-	#experience-banner h2,
-	#projects-banner h2 {
-		margin: 0 !important;
-	}
-	
-	#banner .tagline,
-	#banner p,
-	#experience-banner p,
-	#projects-banner p {
-		margin: 0 !important;
-	}
-	
-	/* Banner buttons (LinkedIn, Resume, etc.) - side by side - MUST stay on one line */
-	#banner .actions,
-	#banner .actions.special,
-	#experience-banner .actions,
-	#projects-banner .actions,
-	#contact .actions {
-		display: flex !important;
-		flex-direction: row !important;
-		justify-content: center !important;
-		align-items: center !important;
-		gap: 0.75em !important;
-		flex-wrap: nowrap !important;
-		margin: 0 !important;
-		width: 100% !important;
-		max-width: 100% !important;
-		overflow: visible !important;
-	}
-	
-	#banner .actions li,
-	#banner .actions.special li,
-	#experience-banner .actions li,
-	#projects-banner .actions li,
-	#contact .actions li {
-		display: inline-block !important;
-		margin: 0 !important;
-		padding: 0 !important;
-		flex-shrink: 0 !important;
-		flex-grow: 0 !important;
-		min-width: auto !important;
-		width: auto !important;
-		max-width: none !important;
-		vertical-align: middle !important;
-		line-height: 1 !important;
-	}
-	
-	#banner .actions .button,
-	#banner .actions.special .button,
-	#banner .actions.special a.button,
-	#banner .actions.special button.button,
-	#experience-banner .actions .button,
-	#projects-banner .actions .button,
-	#contact .actions .button {
-		font-size: 0.7rem !important;
-		padding: 0 1.2em !important;
-		white-space: nowrap !important;
-		display: inline-block !important;
-		width: auto !important;
-		max-width: none !important;
-		min-width: auto !important;
-		box-sizing: border-box !important;
-		flex-shrink: 0 !important;
-		vertical-align: middle !important;
-		line-height: 2.75em !important;
-		height: 2.75em !important;
-		margin: 0 !important;
-	}
-
-	/* Wrap both button rows so the row-to-row gap matches the LinkedIn<->GitHub gap (both 0.75em) */
-	#banner .banner-button-rows {
-		display: flex !important;
-		flex-direction: column !important;
-		align-items: center !important;
-		gap: 0.5em !important;
-	}
-
-	/* Banner action buttons (LinkedIn, GitHub, Resume) - GitHub/Resume widths are synced to
-	   LinkedIn's actual rendered width via JS (see script near end of body), since the
-	   uppercase transform + letter-spacing make ch-based estimates inaccurate. */
-	#banner .actions.special .button {
-		text-align: center !important;
-	}
-
 	/* Ensure buttons stay on one line on very small screens - make them smaller but still on one line */
 	@media screen and (max-width: 480px) {
 		#banner .actions,
