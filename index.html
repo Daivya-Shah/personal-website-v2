@@ -317,7 +317,13 @@
 		height: 2.75em !important;
 		margin: 0 !important;
 	}
-	
+
+	/* Banner action buttons (LinkedIn, GitHub, Resume) - uniform width */
+	#banner .actions.special .button {
+		width: 8.5em !important;
+		text-align: center !important;
+	}
+
 	/* Ensure buttons stay on one line on very small screens - make them smaller but still on one line */
 	@media screen and (max-width: 480px) {
 		#banner .actions,
@@ -746,7 +752,7 @@
 								<li><a href="https://www.linkedin.com/in/daivya-shah/" class="button primary" target="_blank" rel="noopener">LinkedIn</a></li>
 								<li><a href="https://github.com/Daivya-Shah" class="button primary" target="_blank" rel="noopener">GitHub</a></li>
 							</ul>
-							<ul class="actions special" style="margin-top: 0.75em !important;">
+							<ul class="actions special">
 								<li><button type="button" class="button primary" id="resume-request-button">Resume</button></li>
 							</ul>
 						</div>
