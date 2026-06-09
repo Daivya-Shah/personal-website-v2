@@ -371,17 +371,29 @@
 			}
 		}
 		
-		/* Full-bleed backgrounds — shared across all 4 hero sections (scroll-attached; avoids fixed+clip-path jank on swipe) */
+		/* One fixed banner layer behind hero sections — avoids per-section scroll "zoom-in" reveal */
+			body.landing::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				z-index: 0;
+				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
+				background-position: center center;
+				background-repeat: no-repeat;
+				background-size: cover;
+				pointer-events: none;
+			}
+			body.landing #page-wrapper {
+				position: relative;
+				z-index: 1;
+				background: none !important;
+			}
 			#banner,
 			#experience-banner,
 			#projects-banner,
 			#contact {
 				position: relative;
-				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-position: center center;
-				background-repeat: no-repeat;
-				background-size: cover;
-				background-attachment: scroll;
+				background: none !important;
 			}
 
 		/* Experience Banner - Perfect Centering */
@@ -594,22 +606,17 @@
 				padding: 3em 0 2em;
 			}
 
-			/* Drop theme fixed page bg — each hero section paints its own (avoids scroll compositing lag) */
-			body.landing #page-wrapper {
-				background: none !important;
-			}
-
-			/* Mobile: all 4 hero sections fill full screen and clear fixed header */
+			/* Mobile: stable viewport height (svh avoids address-bar resize "zoom") */
 			@media screen and (max-width: 736px) {
 				#banner,
 				#experience-banner,
 				#projects-banner {
-					height: 100dvh !important;
-					min-height: 100dvh !important;
+					height: 100svh !important;
+					min-height: 100svh !important;
 					padding-top: 4em;
 				}
 				#contact {
-					min-height: 100dvh !important;
+					min-height: 100svh !important;
 					padding-top: 4em;
 				}
 				#contact .contact-form {
@@ -1277,7 +1284,7 @@
 							if (target) {
 								e.preventDefault();
 								document.body.classList.remove('is-menu-visible');
-								target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+								target.scrollIntoView({ behavior: 'auto', block: 'start' });
 							}
 						});
 					}

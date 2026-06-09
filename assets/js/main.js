@@ -46,7 +46,7 @@
 	// Scrolly.
 		$('.scrolly')
 			.scrolly({
-				speed: 1500,
+				speed: 0,
 				offset: $header.outerHeight()
 			});
 
