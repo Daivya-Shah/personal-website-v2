@@ -371,28 +371,17 @@
 			}
 		}
 		
-		/* Full-bleed parallax backgrounds — shared across all 4 hero sections */
+		/* Full-bleed backgrounds — shared across all 4 hero sections (scroll-attached; avoids fixed+clip-path jank on swipe) */
 			#banner,
 			#experience-banner,
 			#projects-banner,
 			#contact {
 				position: relative;
-				clip-path: inset(0 0 0 0);
-				background: none !important;
-			}
-			#banner::before,
-			#experience-banner::before,
-			#projects-banner::before,
-			#contact::before {
-				content: '';
-				position: fixed;
-				inset: 0;
-				z-index: -1;
 				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
 				background-position: center center;
 				background-repeat: no-repeat;
 				background-size: cover;
-				pointer-events: none;
+				background-attachment: scroll;
 			}
 
 		/* Experience Banner - Perfect Centering */
@@ -576,7 +565,7 @@
 			/* Contact - Centered form layout */
 			#contact .inner { display: flex; flex-direction: column; align-items: center; margin: auto 0; width: 100%; position: relative; z-index: 1; }
 			#contact header { text-align: center; }
-			#contact .contact-form { width: 100%; max-width: 40em; margin-top: 1em; display: grid; grid-template-columns: 1fr 1fr; gap: 1em; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.25em; backdrop-filter: blur(2px) saturate(1.1); }
+			#contact .contact-form { width: 100%; max-width: 40em; margin-top: 1em; display: grid; grid-template-columns: 1fr 1fr; gap: 1em; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.25em; }
 			#contact .contact-form .full { grid-column: 1 / -1; }
 			#contact .contact-form .actions { grid-column: 1 / -1; justify-content: center; margin-top: 0.5em; }
 			@media screen and (max-width: 736px) { #contact .contact-form { grid-template-columns: 1fr; } }
@@ -595,7 +584,7 @@
 			#contact .contact-form input:focus,
 			#contact .contact-form textarea:focus { outline: none; border-color: #21b2a6; box-shadow: 0 0 0 2px rgba(33,178,166,0.2); }
 
-			/* Let's Connect — same parallax bg as other headers; page scrolls (no inner scroll) */
+			/* Let's Connect — page scrolls (no inner scroll) */
 			#contact {
 				min-height: 100dvh;
 				box-sizing: border-box;
@@ -604,6 +593,12 @@
 				align-items: center;
 				padding: 3em 0 2em;
 			}
+
+			/* Drop theme fixed page bg — each hero section paints its own (avoids scroll compositing lag) */
+			body.landing #page-wrapper {
+				background: none !important;
+			}
+
 			/* Mobile: all 4 hero sections fill full screen and clear fixed header */
 			@media screen and (max-width: 736px) {
 				#banner,
@@ -616,6 +611,9 @@
 				#contact {
 					min-height: 100dvh !important;
 					padding-top: 4em;
+				}
+				#contact .contact-form {
+					background: rgba(0,0,0,0.5);
 				}
 			}
 

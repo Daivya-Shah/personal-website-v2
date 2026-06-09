@@ -6,9 +6,10 @@ export class HeroFX {
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(60, 1, 0.1, 1000);
 		this.camera.position.z = 70;
-		this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-		// Retina phones often use DPR 3; capping at 2 made hero sprites look soft on iOS/Safari
-		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 3));
+		const isMobile = window.matchMedia('(max-width: 736px)').matches;
+		this.renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: true, powerPreference: 'high-performance' });
+		// Cap DPR on phones to keep scroll/swipe smooth while hero is on screen
+		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 2 : 3));
 		this.containerEl.appendChild(this.renderer.domElement);
 		this.renderer.domElement.style.willChange = 'transform';
 
@@ -96,11 +97,22 @@ export class HeroFX {
 		window.addEventListener('mousemove', this._onMouseMove);
 		this.renderer.domElement.addEventListener('click', this._onClick);
 		this.renderer.domElement.style.pointerEvents = 'auto';
+		this._visible = true;
+		const bannerEl = this.containerEl.closest('#banner') || this.containerEl;
+		if (typeof IntersectionObserver !== 'undefined') {
+			this._observer = new IntersectionObserver(([entry]) => {
+				const wasVisible = this._visible;
+				this._visible = entry.isIntersecting;
+				if (this._visible && !wasVisible && !this._raf) this._animate();
+			}, { threshold: 0 });
+			this._observer.observe(bannerEl);
+		}
 		this._animate();
 	}
 
 	dispose = () => {
 		cancelAnimationFrame(this._raf);
+		if (this._observer) this._observer.disconnect();
 		window.removeEventListener('resize', this._onResize);
 		window.removeEventListener('mousemove', this._onMouseMove);
 		this.renderer.domElement.removeEventListener('click', this._onClick);
@@ -111,7 +123,8 @@ export class HeroFX {
 	};
 
 	_initParticles() {
-		const particleCount = 800;
+		const isMobile = window.matchMedia('(max-width: 736px)').matches;
+		const particleCount = isMobile ? 300 : 800;
 		const geometry = new THREE.BufferGeometry();
 		const positions = new Float32Array(particleCount * 3);
 		const colors = new Float32Array(particleCount * 3);
@@ -347,6 +360,10 @@ export class HeroFX {
 	};
 
 	_animate = () => {
+		if (!this._visible) {
+			this._raf = null;
+			return;
+		}
 		this._raf = requestAnimationFrame(this._animate);
 		const t = this.clock.getElapsedTime();
 		
