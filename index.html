@@ -371,6 +371,30 @@
 			}
 		}
 		
+		/* Full-bleed parallax backgrounds — shared across all 4 hero sections */
+			#banner,
+			#experience-banner,
+			#projects-banner,
+			#contact {
+				position: relative;
+				clip-path: inset(0 0 0 0);
+				background: none !important;
+			}
+			#banner::before,
+			#experience-banner::before,
+			#projects-banner::before,
+			#contact::before {
+				content: '';
+				position: fixed;
+				inset: 0;
+				z-index: -1;
+				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
+				background-position: center center;
+				background-repeat: no-repeat;
+				background-size: cover;
+				pointer-events: none;
+			}
+
 		/* Experience Banner - Perfect Centering */
 			#experience-banner {
 				display: flex;
@@ -382,19 +406,6 @@
 				min-height: 100dvh;
 				box-sizing: border-box;
 				padding-top: 3em;
-				position: relative;
-				clip-path: inset(0 0 0 0);
-			}
-			#experience-banner::before {
-				content: '';
-				position: fixed;
-				inset: 0;
-				z-index: -1;
-				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-position: center center;
-				background-repeat: no-repeat;
-				background-size: cover;
-				pointer-events: none;
 			}
 			
 			#experience-banner .inner {
@@ -422,19 +433,6 @@
 				min-height: 100dvh;
 				box-sizing: border-box;
 				padding-top: 3em;
-				position: relative;
-				clip-path: inset(0 0 0 0);
-			}
-			#projects-banner::before {
-				content: '';
-				position: fixed;
-				inset: 0;
-				z-index: -1;
-				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-position: center center;
-				background-repeat: no-repeat;
-				background-size: cover;
-				pointer-events: none;
 			}
 			
 			#projects-banner .inner {
@@ -451,23 +449,12 @@
 				font-size: clamp(2rem, 5vw, 3rem);
 			}
 			
-			/* Main hero banner background on all layouts */
+			/* Main hero banner — full viewport height, clears fixed header */
 			#banner {
-				position: relative;
 				height: 100dvh !important;
 				min-height: 100dvh !important;
-				clip-path: inset(0 0 0 0);
-			}
-			#banner::before {
-				content: '';
-				position: fixed;
-				inset: 0;
-				z-index: -1;
-				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-position: center center;
-				background-repeat: no-repeat;
-				background-size: cover;
-				pointer-events: none;
+				box-sizing: border-box;
+				padding-top: 3em;
 			}
 			#banner .fx-layer { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
 			#banner .inner { position: relative; z-index: 1; }
@@ -587,7 +574,7 @@
             #skills .skill.text-only { justify-content: center; text-align: center; }
 			
 			/* Contact - Centered form layout */
-			#contact .inner { display: flex; flex-direction: column; align-items: center; margin: auto 0; width: 100%; }
+			#contact .inner { display: flex; flex-direction: column; align-items: center; margin: auto 0; width: 100%; position: relative; z-index: 1; }
 			#contact header { text-align: center; }
 			#contact .contact-form { width: 100%; max-width: 40em; margin-top: 1em; display: grid; grid-template-columns: 1fr 1fr; gap: 1em; background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 1.25em; backdrop-filter: blur(2px) saturate(1.1); }
 			#contact .contact-form .full { grid-column: 1 / -1; }
@@ -608,36 +595,23 @@
 			#contact .contact-form input:focus,
 			#contact .contact-form textarea:focus { outline: none; border-color: #21b2a6; box-shadow: 0 0 0 2px rgba(33,178,166,0.2); }
 
-			/* Let's Connect - full-bleed background; page scrolls (no inner scroll container) */
+			/* Let's Connect — same parallax bg as other headers; page scrolls (no inner scroll) */
 			#contact {
-				position: relative;
 				min-height: 100dvh;
 				box-sizing: border-box;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
 				padding: 3em 0 2em;
-				background: none !important;
 			}
-			#contact::before {
-				content: '';
-				position: absolute;
-				inset: 0;
-				z-index: -1;
-				background-image: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/banner.jpg');
-				background-position: center center;
-				background-repeat: no-repeat;
-				background-size: cover;
-				pointer-events: none;
-			}
-
-			/* Mobile: all section banners fill full screen height */
+			/* Mobile: all 4 hero sections fill full screen and clear fixed header */
 			@media screen and (max-width: 736px) {
 				#banner,
 				#experience-banner,
 				#projects-banner {
 					height: 100dvh !important;
 					min-height: 100dvh !important;
+					padding-top: 4em;
 				}
 				#contact {
 					min-height: 100dvh !important;
